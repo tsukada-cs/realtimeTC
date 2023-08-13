@@ -46,7 +46,7 @@ def download_and_read_btk(ID, odir):
     return ds
 
 def call_p01_plot_btk(ID, odir):
-    subprocess.call(['python', '/Users/tsukada/git/realtimeTC/scripts/p01_plot_btk.py', f'--bbnnyyyy={ID}', f'--odir={odir}'])
+    subprocess.call(['python', f'{os.environ["HOME"]}/git/realtimeTC/scripts/p01_plot_btk.py', f'--bbnnyyyy={ID}', f'--odir={odir}'])
 
 def create_TC(tclist, ID, odir, no_image):
     return update_TC(tclist, ID, odir, no_image)
