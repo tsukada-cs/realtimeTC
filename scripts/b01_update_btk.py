@@ -45,8 +45,8 @@ def download_and_read_btk(ID, odir):
     ds = Realtime.download_jtwc_bt_from_navy(ID, opath=f"{odir}/{ID}.txt", asxarray=True)
     return ds
 
-def call_p01_plot_btk(ID):
-    subprocess.call(['python', '/Users/tsukada/git/realtimeTC/scripts/p01_plot_btk.py', f'--bbnnyyyy={ID}', '--odir=/Users/tsukada/git/realtimeTC/outputs/JTWC_pre_intensity'])
+def call_p01_plot_btk(ID, odir):
+    subprocess.call(['python', '/Users/tsukada/git/realtimeTC/scripts/p01_plot_btk.py', f'--bbnnyyyy={ID}', f'--odir={odir}'])
 
 def create_TC(tclist, ID, odir, no_image):
     return update_TC(tclist, ID, odir, no_image)
@@ -62,7 +62,7 @@ def update_TC(tclist, ID, odir, no_image):
         tclist = pd.concat([tclist,df1line])
     tclist = tclist.sort_index()
     if not no_image:
-        call_p01_plot_btk(ID)
+        call_p01_plot_btk(ID, odir)
     return tclist
 #%%
 for ID in IDs:
