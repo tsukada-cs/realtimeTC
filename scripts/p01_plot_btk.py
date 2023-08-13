@@ -88,7 +88,7 @@ ax.plot([], [], "o-", lw=4, c="#aa6633", mec="w", ms=4.5, mew=0.8, label="JTWC V
 ax.plot([], [], "o-", lw=4, c="#0099aa", mec="w", ms=4.5, mew=0.8, label="JTWC Pmin")
 
 # observation: SAR NESDIS
-sar_NESDIS = Realtime.download_SAR_ATCF_from_NESDIS(ds["bbnnyyyy"].item(), odir="/Users/tsukada/git/realtimeTC/refdata/TCs/NESDIS_SAR_ATCF")
+sar_NESDIS = Realtime.download_SAR_ATCF_from_NESDIS(ds["bbnnyyyy"].item(), odir=f"{os.environ['HOME']}/git/realtimeTC/refdata/TCs/NESDIS_SAR_ATCF")
 if sar_NESDIS.index.size >= 1:
     ax.scatter(sar_NESDIS.time, sar_NESDIS.vmax, marker="p", c="darkorange", s=70, ec="k", zorder=6, label="SAR Vmax (NESDIS)")
 
