@@ -1,0 +1,5 @@
+SHELL=/bin/bash
+BASH_ENV=~/.bashrc_conda
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/Users/tsukada/anaconda3/condabin:/Users/tsukada/anaconda3/envs/tc/bin
+15 0-23 * * * bash /Users/tsukada/git/realtimeTC/scripts/cron_1h.sh
+
