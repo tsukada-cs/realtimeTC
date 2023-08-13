@@ -40,7 +40,39 @@ def ms_to_knot(ms):
     """
     return 1.94384 * ms
 
-def get_jtwc_IDs(year, basin):
+def bb_to_basin(bb):
+    basin = {"AL":"ATL","EP":"EPAC","WP":"WPAC","IO":"IO","SH":"SHEM"}[bb]
+    return basin
+
+def b_to_bb(b):
+    bb = {"L":"AL","E":"EP","W":"WP","A":"IO","B":"IO","S":"SH","P":"SH"}[b]
+    return bb
+
+def basin_to_bb(bb):
+    basin = {"ATL":"AL","EPAC":"EP","WPAC":"WP","IO":"IO","SHEM":"SH"}[bb]
+    return basin
+
+def b_to_bb(b):
+    bb = {"L":"AL","E":"EP","W":"WP","A":"IO","B":"IO","S":"SH","P":"SH"}[b]
+    return bb
+
+def b_to_basin(b):
+    return bb_to_basin(b_to_bb(b))
+
+def bbnnyyyy_to_nnbname(bbnnyyyy):
+    url_header = "https://www.nrlmry.navy.mil/tcdat"
+    bb, year = bbnnyyyy[:2], bbnnyyyy[4:]
+    basin = bb_to_basin(bb)
+
+    url = f"{url_header}/tc{year[-2:]}/{basin}/"
+    ssl._create_default_https_context = ssl._create_unverified_context
+    response = urllib.request.urlopen(url)
+    html = response.read().decode('utf-8')
+    pattern = rf'href="({bbnnyyyy[2:4]}[A-Z].[A-Z]+)/">'
+    nnbname = re.findall(pattern, html)[0]
+    return nnbname
+
+def get_jtwc_IDs(year, bb):
     """
     Get a list of JTWC TC directory names for the specified year and basin.
 
@@ -48,7 +80,7 @@ def get_jtwc_IDs(year, basin):
     ----------
     year : int
         The year to retrieve the TC directories.
-    basin : str
+    bb : str
         The basin to retrieve the TC directories.
         Valid values are "AL" (Atlantic), "EP" (Eastern Pacific), "WP" (Western Pacific),
         "IO" (Indian Ocean), and "SH" (Southern Hemisphere).
@@ -58,11 +90,13 @@ def get_jtwc_IDs(year, basin):
     numpy.ndarray
         A 1-dimensional array of TC directory names.
     """
-    basin = basin.upper()
-    if basin not in ("AL","EP","WP","IO","SH"):
-        raise ValueError('basin must be in ["AL","EP","WP","IO","SH"]')
+    year = str(year)
+    bb = bb.upper()
+    if bb not in ("AL","EP","WP","IO","SH"):
+        raise ValueError('bb must be in ["AL","EP","WP","IO","SH"]')
     url_header = "https://www.nrlmry.navy.mil/tcdat"
-    url = f"{url_header}/tc{year}/{basin}/"
+
+    url = f"{url_header}/tc{year}/{bb}/"
 
     ssl._create_default_https_context = ssl._create_unverified_context
     response = urllib.request.urlopen(url)
@@ -74,15 +108,15 @@ def get_jtwc_IDs(year, basin):
 
 def get_lastmod(bbnnyyyy):
     bbnnyyyy = bbnnyyyy.upper()
-    url = f"https://www.nrlmry.navy.mil/tcdat/tc{bbnnyyyy[-4:]}/{bbnnyyyy[:2]}/{bbnnyyyy}/txt/"
+    url_header = "https://www.nrlmry.navy.mil/tcdat"
+    url = f"{url_header}/tc{bbnnyyyy[-4:]}/{bbnnyyyy[:2]}/{bbnnyyyy}/txt/"
     ssl._create_default_https_context = ssl._create_unverified_context
     response = urllib.request.urlopen(url)
     html = response.read().decode('utf-8')
 
-    pattern = r'trackfile.txt.*(\d{2}-[A-Za-z]{3}-\d{4} \d{2}:\d{2})'
+    pattern = r'trackfile.txt</a>.*(\d{2}-[A-Za-z]{3}-\d{4} \d{2}:\d{2})'
     lastmod = re.findall(pattern, html)[0]
     return lastmod
-
 
 def _get_jtwc_bt_text_from_navy(bbnnyyyy):
     """
@@ -95,9 +129,9 @@ def _get_jtwc_bt_text_from_navy(bbnnyyyy):
     bbnnyyyy = bbnnyyyy.upper()
     if not isinstance(bbnnyyyy,str) or len(bbnnyyyy) != 8:
         raise ValueError("`bbnnyyyy` must be str and length of 8")
+    
     url_header = "https://www.nrlmry.navy.mil/tcdat"
-    basin, year = bbnnyyyy[:2], bbnnyyyy[4:]
-    url = f"{url_header}/tc{year}/{basin}/{bbnnyyyy}/txt/trackfile.txt"
+    url = f"{url_header}/tc{bbnnyyyy[-4:]}/{bbnnyyyy[:2]}/{bbnnyyyy}/txt/trackfile.txt"
 
     ssl._create_default_https_context = ssl._create_unverified_context
     response = urllib.request.urlopen(url)
@@ -164,6 +198,7 @@ def _read_jtwc_bt_from_rows(rows):
         A processed dataset containing the BT data.
     """
     df = pd.DataFrame(rows, columns=["nnb","name","yymmdd","HHMM","latNS","lonEW","basin","vmax_kt","pres"], dtype=str)
+    df = df.where(df["yymmdd"]!="00").dropna()
     df["time"] = pd.to_datetime(df["yymmdd"], format="%y%m%d") + pd.to_timedelta(df["HHMM"].str[:2].astype(int), unit="h") + pd.to_timedelta(df["HHMM"].str[2:].astype(int), unit="min")
     df["lon"] = df["lonEW"].str[:-1].astype(float) * df["lonEW"].str[-1].replace({"E":"1","W":"-1"}).astype(float)
     df["lat"] = df["latNS"].str[:-1].astype(float) * df["latNS"].str[-1].replace({"N":"1","S":"-1"}).astype(float)
@@ -177,7 +212,7 @@ def _read_jtwc_bt_from_rows(rows):
     ds["nnb"] = df["nnb"][0]
     ds["name"] = df["name"][0]
     ds["year"] = ds["time"][0].dt.year.item()
-    basin = {"L":"AL", "E":"EP", "W":"WP", "A":"IO", "B":"IO", "S":"SH"}[ds.nnb.item()[-1]]
+    basin = {"L":"AL", "E":"EP", "W":"WP", "A":"IO", "B":"IO", "S":"SH", "P":"SH"}[ds.nnb.item()[-1]]
     ds["bbnnyyyy"] = basin+ds.nnb.item()[:2]+str(ds.year.item())
 
     ds["lon"].attrs.update({"name":"lon","long_name":"Longitude","units":"degrees_east"})
@@ -210,7 +245,7 @@ def _rawtext_to_rows(text, sep=" "):
     
     rows = []
     for entry in text:
-        values = entry.split(sep)
+        values = re.split(f"{sep}+", entry)
         rows.append(values)
     return rows
 
