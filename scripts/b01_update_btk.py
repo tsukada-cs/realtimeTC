@@ -2,9 +2,7 @@
 import os
 import argparse
 import datetime
-import subprocess
 
-import numpy as np
 import pandas as pd
 
 import Realtime
@@ -76,5 +74,5 @@ else:
     opath = path_to_tclist
 tclist["name"] = tclist["name"].str.rjust(20)
 tclist.sort_index().to_csv(opath, index_label="ID", encoding="utf-8")
-print(f"[SUCCESS] check: {opath}")
+print(f"[SUCCESS] b01")
 # %%
