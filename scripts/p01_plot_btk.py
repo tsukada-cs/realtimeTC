@@ -12,7 +12,7 @@ import Realtime
 # [for test]
 # %load_ext autoreload
 # %autoreload 2
-# fpath = f"{os.environ['HOME']}/git/realtimeTC/refdata/TCs/JTWC_pre_btk/WP072023.txt"
+# fpath = f"{os.environ['HOME']}/git/realtimeTC/refdata/TCs/JTWC_pre_btk/WP062023.txt"
 # odir = f"{os.environ['HOME']}/git/realtimeTC/outputs/JTWC_pre_intensity"
 # st = None
 # et = None
@@ -77,7 +77,7 @@ category_kwargs = dict(
 )
 
 ax, axr = plotter.bt_intensity(ax, ds["time"], ds["vmax"], ds["pres"], xlim=xlim, ylim=ylim_vmax, ylimr=ylim_pres, 
-                            windcolor="#aa6633", prescolor="#0099aa", lw=4, stroke_lw=6, s=25, ew=0.9, 
+                            windcolor="#aa6633", prescolor="#0099aa", lw=3.6, stroke_lw=4.5, s=15, ew=0.5, 
                             category_kwargs=category_kwargs, vmax_is_front=True)
 ax.grid(ls="-", c="#cccccc", axis="y", lw=0.5, zorder=1)
 
@@ -90,8 +90,8 @@ axr.set_ylabel("Central pressure (hPa)", labelpad=8, rotation=-90)
 # ax.plot([], [], "o-", lw=4, c="#aa3333", mec="w", ms=4, mew=1, label="JMA Vmax (1 min via CI#)")
 # ax.plot([], [], ls="--", c="#aa3333", label="JMA Vmax (10 min)")
 # ax.plot([], [], "o-", lw=4, c="#0066aa", mec="w", ms=4, mew=1, label="JMA Pmin")
-ax.plot([], [], "o-", lw=4, c="#aa6633", mec="w", ms=4.5, mew=0.8, label="JTWC Vmax")
-ax.plot([], [], "o-", lw=4, c="#0099aa", mec="w", ms=4.5, mew=0.8, label="JTWC Pmin")
+ax.plot([], [], "o-", lw=4, c="#aa6633", mec="w", ms=4.5, mew=0.7, label="JTWC Vmax")
+ax.plot([], [], "o-", lw=4, c="#0099aa", mec="w", ms=4.5, mew=0.7, label="JTWC Pmin")
 
 # JMA
 if JMA_csv is not None:
@@ -102,10 +102,10 @@ if JMA_csv is not None:
         jma["vmax_ms_1min"] = TCtools.knot_to_ms(TCtools.dvorak.wind10min_to_1min(jma["vmax_kt"])).round(1)
 
         ax, axr = plotter.bt_intensity(ax, jma["time"], jma["vmax_ms_1min"], jma["pres"], xlim=xlim, ylim=ylim_vmax, ylimr=ylim_pres, 
-                    windcolor="#aa3333", prescolor="#0066aa", lw=4, stroke_lw=6, s=25, ew=0.9, vmax_is_front=True,
+                    windcolor="#aa3333", prescolor="#0066aa", lw=3.6, stroke_lw=4.5, s=15, ew=0.5, vmax_is_front=True,
                     axr=axr, plot_category=False)
-        ax.plot([], [], "o-", lw=4, c="#aa3333", mec="w", ms=4.5, mew=0.8, label="JMA Vmax (via CI#)")
-        ax.plot([], [], "o-", lw=4, c="#0066aa", mec="w", ms=4.5, mew=0.8, label="JMA Pmin")
+        ax.plot([], [], "o-", lw=4, c="#aa3333", mec="w", ms=4.5, mew=0.7, label="JMA Vmax (via CI#)")
+        ax.plot([], [], "o-", lw=4, c="#0066aa", mec="w", ms=4.5, mew=0.7, label="JMA Pmin")
         ax.plot(jma["time"], jma["vmax"], ls="--", c="#aa3333", zorder=4.5, label="JMA 10-min Vmax")
 
         max_vmax = max(max_vmax, jma.vmax_ms_1min.max().item())
@@ -133,12 +133,11 @@ else:
 
 ax.set_title(f'[{nnb}] {name} ({year}) | Lifetime max intensity: {max_vmax} m/s ({min_pres} hPa)', loc="left")
 
+#%%
 if fpath is not None:
     oname = os.path.basename(fpath)[:-4] + ".png"
 else:
     oname = bbnnyyyy.upper() + ".png"
-
-#%%
 fig.savefig(f"{odir}/{oname}", dpi=300, bbox_inches="tight", pad_inches=.1)
 
 # %%
