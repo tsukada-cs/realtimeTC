@@ -35,8 +35,8 @@ for target_ID in IDs:
     name = tclist["name"][target_ID].strip()
     number = JMA_mapping[name]
     ds = Realtime.get_jma_bt_from_DigitalTyphoon(target_ID[-4:], number).drop("index")
-    ds["time"] = ds["time"].dt.strftime("%Y-%m-%d %H%M")
-
+    if ds.time.size > 0:
+        ds["time"] = ds["time"].dt.strftime("%Y-%m-%d %H%M")
     oname = f'{odir}/{target_ID}_JMA.csv'
     ds.to_pandas().to_csv(oname, index=True, index_label="time")
 # %%

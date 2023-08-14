@@ -96,18 +96,19 @@ ax.plot([], [], "o-", lw=4, c="#0099aa", mec="w", ms=4.5, mew=0.8, label="JTWC P
 # JMA
 if JMA_csv is not None:
     jma = pd.read_csv(JMA_csv, skipinitialspace=True, parse_dates=["time"])
-    validwind = jma["vmax"]>0
-    jma[["vmax","vmax_kt"]] = jma[["vmax","vmax_kt"]].where(validwind)
-    jma["vmax_ms_1min"] = TCtools.knot_to_ms(TCtools.dvorak.wind10min_to_1min(jma["vmax_kt"])).round(1)
+    if jma.index.size >= 1:
+        validwind = jma["vmax"]>0
+        jma[["vmax","vmax_kt"]] = jma[["vmax","vmax_kt"]].where(validwind)
+        jma["vmax_ms_1min"] = TCtools.knot_to_ms(TCtools.dvorak.wind10min_to_1min(jma["vmax_kt"])).round(1)
 
-    ax, axr = plotter.bt_intensity(ax, jma["time"], jma["vmax_ms_1min"], jma["pres"], xlim=xlim, ylim=ylim_vmax, ylimr=ylim_pres, 
-                windcolor="#aa3333", prescolor="#0066aa", lw=4, stroke_lw=6, s=25, ew=0.9, vmax_is_front=True,
-                axr=axr, plot_category=False)
-    ax.plot([], [], "o-", lw=4, c="#aa3333", mec="w", ms=4.5, mew=0.8, label="JMA Vmax (via CI#)")
-    ax.plot([], [], "o-", lw=4, c="#0066aa", mec="w", ms=4.5, mew=0.8, label="JMA Pmin")
-    ax.plot(jma["time"], jma["vmax"], ls="--", c="#aa3333", zorder=4.5, label="JMA 10-min Vmax")
+        ax, axr = plotter.bt_intensity(ax, jma["time"], jma["vmax_ms_1min"], jma["pres"], xlim=xlim, ylim=ylim_vmax, ylimr=ylim_pres, 
+                    windcolor="#aa3333", prescolor="#0066aa", lw=4, stroke_lw=6, s=25, ew=0.9, vmax_is_front=True,
+                    axr=axr, plot_category=False)
+        ax.plot([], [], "o-", lw=4, c="#aa3333", mec="w", ms=4.5, mew=0.8, label="JMA Vmax (via CI#)")
+        ax.plot([], [], "o-", lw=4, c="#0066aa", mec="w", ms=4.5, mew=0.8, label="JMA Pmin")
+        ax.plot(jma["time"], jma["vmax"], ls="--", c="#aa3333", zorder=4.5, label="JMA 10-min Vmax")
 
-    max_vmax = max(max_vmax, jma.vmax_ms_1min.max().item())
+        max_vmax = max(max_vmax, jma.vmax_ms_1min.max().item())
 
 # observation: SAR NESDIS
 if sar_NESDIS_csv is not None:
