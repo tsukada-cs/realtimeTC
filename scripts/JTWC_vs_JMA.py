@@ -76,10 +76,10 @@ units = "m/s"
 fig, ax2 = plt.subplots(figsize=(6,4), facecolor="w")
 xlim = [st,et]
 category_kwargs = dict(
-    category_text=category_text, windunits=units, windcolor="#aa6633", prescolor="#0099aa"
+    category_text=category_text, windunits=units
 )
-ax2, ax2r = plotter.bt_intensity(ax2, jtwc["time"], jtwc["vmax_ms"], jtwc["pres"], xlim=xlim, ylim=ylim, ylimr=ylimr, category_kwargs=category_kwargs)
-ax2, ax2r = plotter.bt_intensity(ax2, jma["time"], jma["vmax_ms_1min"], jma["pres"], xlim=xlim, ylim=ylim, ylimr=ylimr, axr=ax2r, plot_category=False)
+ax2, ax2r = plotter.bt_intensity(ax2, jtwc["time"], jtwc["vmax_ms"], jtwc["pres"], xlim=xlim, ylim=ylim, ylimr=ylimr, windcolor="#aa6633", prescolor="#0099aa", category_kwargs=category_kwargs)
+ax2, ax2r = plotter.bt_intensity(ax2, jma["time"], jma["vmax_ms_1min"], jma["pres"], xlim=xlim, ylim=ylim, ylimr=ylimr, axr=ax2r, windcolor="#aa3333", prescolor="#0066aa", plot_category=False)
 
 ax2.plot(jma["time"], jma["vmax_ms"], ls="--", c="#aa3333", zorder=29)
 
