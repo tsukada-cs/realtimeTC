@@ -16,7 +16,7 @@ parser = argparse.ArgumentParser(description="Process year and basin arguments."
 parser.add_argument("path_to_tclist", type=str, help="Path to tclist.csv")
 parser.add_argument("-t", "--time_cutoff", type=float, default=24, help="Cut-off point in time for considering data as the latest (in `time_units). Data up to this hours before this cut-off point is considered as the latest data.")
 parser.add_argument("-u", "--time_units", type=str, default="hour")
-parser.add_argument("-o", "--opath", type=str, default="./latest_IDlist.txt", help="ID list")
+parser.add_argument("-o", "--opath", type=str, default="./latest_IDlist.csv", help="ID list")
 
 args = parser.parse_args()
 path_to_tclist = args.path_to_tclist
