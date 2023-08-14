@@ -2,6 +2,7 @@ conda activate tc
 
 typeset -a basins=("AL" "EP" "WP" "IO" "SH")
 year=$(date +%Y)
+
 for basin in "${basins[@]}"; do
     echo "=====" $year $basin "====="
     $HOME/anaconda3/envs/tc/bin/python $HOME/git/realtimeTC/scripts/b01_update_btk.py -y $year -b $basin -p $HOME/git/realtimeTC/refdata/TCs/tclist.csv -o $HOME/git/realtimeTC/refdata/TCs/JTWC_pre_btk
