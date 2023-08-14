@@ -3,7 +3,6 @@ import io
 import ssl
 import urllib.request
 
-import requests
 import numpy as np
 import pandas as pd
 
@@ -340,7 +339,7 @@ def download_SAR_ATCF_from_NESDIS(bbnnyyyy, odir="./"):
     
     df = pd.DataFrame(np.array([times,vmax_kts]).T, columns=["time", "vmax_kt"])
     df["vmax"] = knot_to_ms(df["vmax_kt"])
-    oname = bbnnyyyy + "_NESDIS_SAR_ATCF.txt"
+    oname = bbnnyyyy + "_NESDIS_SAR_ATCF.csv"
     df.to_csv(odir+"/"+oname, index_label="index")
 
     ds = df.to_xarray()

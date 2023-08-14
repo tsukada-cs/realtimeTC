@@ -12,10 +12,11 @@ import Realtime
 # [for test]
 # %load_ext autoreload
 # %autoreload 2
-# fpath = "/Users/tsukada/git/realtimeTC/refdata/TCs/JTWC_pre_intensity/WP072023.txt"
-# odir = "/Users/tsukada/git/realtimeTC/outputs/JTWC_pre_intensity"
+# fpath = f"{os.environ['HOME']}/git/realtimeTC/refdata/TCs/JTWC_pre_intensity/WP072023.txt"
+# odir = f"{os.environ['HOME']}/git/realtimeTC/outputs/JTWC_pre_intensity"
 # st = None
 # et = None
+# sar_NESDIS_csv = None
 #%%
 parser = argparse.ArgumentParser(description="Process year and basin arguments.")
 parser.add_argument("--bbnnyyyy", type=str, help="The ID for target TC")
@@ -23,6 +24,7 @@ parser.add_argument("--fpath", type=str, help="The filepath for target besttrack
 parser.add_argument("-o", "--odir", type=str, default="/Users/tsukada/git/realtimeTC/outputs/JTWC_pre_intensity")
 parser.add_argument("-s", "--st", type=str, help="Start time to plot in time recognizable format")
 parser.add_argument("-e", "--et", type=str, help="End time to plot in time recognizable format")
+parser.add_argument("--sar_NESDIS_csv", type=str, help="path to NESDIS-SAR Vmax listing file")
 args = parser.parse_args()
 
 if args.fpath is not None and args.bbnnyyyy is not None:
@@ -35,6 +37,8 @@ bbnnyyyy = args.bbnnyyyy.upper()
 odir = args.odir
 st = args.st
 et = args.et
+sar_NESDIS_csv = args.sar_NESDIS_csv
+
 # %%
 if fpath is not None:
     ds = Realtime.open_jtwc_bt_file(fpath)
@@ -88,9 +92,10 @@ ax.plot([], [], "o-", lw=4, c="#aa6633", mec="w", ms=4.5, mew=0.8, label="JTWC V
 ax.plot([], [], "o-", lw=4, c="#0099aa", mec="w", ms=4.5, mew=0.8, label="JTWC Pmin")
 
 # observation: SAR NESDIS
-sar_NESDIS = Realtime.download_SAR_ATCF_from_NESDIS(ds["bbnnyyyy"].item(), odir=f"{os.environ['HOME']}/git/realtimeTC/refdata/TCs/NESDIS_SAR_ATCF")
-if sar_NESDIS.index.size >= 1:
-    ax.scatter(sar_NESDIS.time, sar_NESDIS.vmax, marker="p", c="darkorange", s=70, ec="k", zorder=6, label="SAR Vmax (NESDIS)")
+if sar_NESDIS_csv is not None:
+    sar_NESDIS = pd.read_csv(sar_NESDIS_csv)
+    if sar_NESDIS.index.size >= 1:
+        ax.scatter(sar_NESDIS["time"], sar_NESDIS["vmax"], marker="p", c="darkorange", s=70, ec="k", zorder=6, label="SAR Vmax (NESDIS)")
 
 # sar_IFREMER = Realtime.download_SAR_ATCF_from_IFREMER(ds["bbnnyyyy"].item())
 # if sar_IFREMER.index.size >= 1:
