@@ -209,7 +209,7 @@ def _read_jtwc_bt_from_rows(rows):
     ds["vmax_kt"] = ds["vmax_kt"].where(ds["vmax_kt"]>0)
     ds["vmax"] = knot_to_ms(ds["vmax_kt"])
     ds["nnb"] = df["nnb"][0]
-    ds["name"] = df["name"][0]
+    ds["name"] = df["name"][-1]
     ds["year"] = ds["time"][0].dt.year.item()
     basin = {"L":"AL", "E":"EP", "W":"WP", "A":"IO", "B":"IO", "S":"SH", "P":"SH"}[ds.nnb.item()[-1]]
     ds["bbnnyyyy"] = basin+ds.nnb.item()[:2]+str(ds.year.item())
