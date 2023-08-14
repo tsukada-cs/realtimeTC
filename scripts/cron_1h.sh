@@ -28,6 +28,9 @@ $HOME/anaconda3/envs/tc/bin/python $HOME/git/realtimeTC/scripts/b03_acquire_NESD
 # c01(p01) plot best track intensity
 $HOME/anaconda3/envs/tc/bin/python $HOME/git/realtimeTC/scripts/c01_call_p01.py --plot_NESDIS_SAR
 
+# h01 generate html
+$HOME/anaconda3/envs/tc/bin/python $HOME/git/realtimeTC/scripts/h01_generate_html.py
+
 # rsync images
 rsync -av $HOME/git/realtimeTC/outputs/JTWC_pre_intensity/ tc-times@www1163.sakura.ne.jp:www/tmp/
 
