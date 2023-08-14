@@ -67,7 +67,7 @@ for ID in IDs:
             tclist = update_TC(tclist, ID, odir)
             print(f"-- {ID} is updated")
         else:
-            print(f"-- {ID} is not updated")
+            pass
 
 if no_replace:
     current_time = datetime.datetime.now()
