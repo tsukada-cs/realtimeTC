@@ -28,7 +28,7 @@ opath = args.opath
 tclist = pd.read_csv(path_to_tclist)
 lastmods = pd.to_datetime(tclist["lastmod"], format="%d-%b-%Y %H:%M")
 
-elapsed_times = (pd.Timestamp.now("UTC").replace(tzinfo=None)-pd.Timedelta(7,"h")) - lastmods
+elapsed_times = (pd.Timestamp.now("UTC").replace(tzinfo=None)-pd.Timedelta(hours=7)) - lastmods
 is_latest = elapsed_times <= pd.Timedelta(time_cutoff, time_units)
 # %%
 latest_IDs = tclist["ID"].where(is_latest).dropna()
