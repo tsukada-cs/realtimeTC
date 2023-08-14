@@ -7,6 +7,7 @@ import pandas as pd
 
 import Realtime
 
+
 # # [for test]
 # %load_ext autoreload
 # %autoreload 2
@@ -18,7 +19,6 @@ import Realtime
 # force = True
 # time_cutoff = 72
 # time_units = "hour"
-
 #%%
 parser = argparse.ArgumentParser(description="Process year and basin arguments.")
 parser.add_argument("-y", "--year", type=int, help="The year to retrieve the TC directories.")
@@ -59,7 +59,7 @@ def update_TC(tclist, ID, odir):
         tclist = pd.concat([tclist,df1line])
     tclist = tclist.sort_index()
     return tclist
-#%%
+#%% main
 tclist = pd.read_csv(path_to_tclist, index_col="ID", skipinitialspace=True)
 lastmods = pd.to_datetime(tclist["lastmod"], format="%d-%b-%Y %H:%M")
 tclist["elapsed_times"] = (pd.Timestamp.now("UTC").replace(tzinfo=None)-pd.Timedelta(hours=7)) - lastmods
@@ -87,6 +87,7 @@ if no_replace:
     opath = os.path.dirname(path_to_tclist) + current_time.strftime("/%Y-%m-%dT%H%M%S_")+ os.path.basename(path_to_tclist)
 else:
     opath = path_to_tclist
+
 tclist["name"] = tclist["name"].str.rjust(20)
 tclist.sort_index().to_csv(opath, index_label="ID", encoding="utf-8")
 print(f"[SUCCESS] b01")

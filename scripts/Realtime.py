@@ -1,8 +1,8 @@
 import re
-import io
 import ssl
 import urllib.request
 
+import bs4
 import numpy as np
 import pandas as pd
 
@@ -344,3 +344,66 @@ def download_SAR_ATCF_from_NESDIS(bbnnyyyy, odir="./"):
 
     ds = df.to_xarray()
     return ds
+
+def get_jma_bt_from_DigitalTyphoon(year, nn):
+    """
+    Parameters
+    ----------
+    year : int or str
+        Year.
+    nn : int or str
+        Number of Typhoon.
+    """
+    url_header = "http://agora.ex.nii.ac.jp/digital-typhoon/summary/wnp/l"
+    yyyynn = str(year)+str(nn).zfill(2)
+    url = f"{url_header}/{yyyynn}.html.en"
+
+    ssl._create_default_https_context = ssl._create_unverified_context
+    try:
+        response = urllib.request.urlopen(url)
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            raise FileNotFoundError(f"Typhoon No.{nn} ({year}) is not found at {url}")
+    text = response.read().decode('utf-8')
+    soup = bs4.BeautifulSoup(text, 'html.parser')
+
+    tyname_line = soup.find("div", attrs={"class":"TYNAME"}).text
+    name = re.findall(r'Typhoon \d{6} \((.*?)\)', tyname_line)[0]
+    latest_update_line = soup.find("td", attrs={"class", "INFOUPDATED"}).text
+    latest_update = pd.to_datetime(re.findall(r'\d{4}-\d{2}-\d{2}', latest_update_line)[0])
+
+    # Read Track
+    pickup_lines = (soup.find_all("tr", attrs={"class", "ROW1", "ROW0"}))
+    columns = ["time", "lat", "lon", "pres", "vmax_kt", "grade"]
+    df = pd.DataFrame(np.full([len(pickup_lines), len(columns)], np.nan), columns=columns, index=None)
+    for i, info in enumerate(pickup_lines):
+        dfi = info.get_text().split()
+        time = pd.Timestamp(int(dfi[0]), int(dfi[1]), int(dfi[2]), int(dfi[3]))
+        lat, lon, pres, vmax_knot, grade = float(dfi[4]), float(dfi[5]), int(dfi[6]), int(dfi[7]), int(dfi[8])
+        df.iloc[i,:] = time, lat, lon, pres, vmax_knot, grade
+    df["vmax"] = np.round(knot_to_ms(df["vmax_kt"]),1)
+    ds = df.to_xarray().swap_dims({"index": "time"})
+    ds[["vmax_kt", "pres"]] = ds[["vmax_kt", "pres"]].astype(int)
+
+    ds["name"] = name
+    ds.attrs.update({
+        "latest_update": latest_update.strftime("%Y-%m-%d %H:%M:%S")
+    })
+    return ds
+
+def get_JMA_number_name_mapping(year):
+    url = f"http://agora.ex.nii.ac.jp/digital-typhoon/year/wnp/{year}.html.en"
+    ssl._create_default_https_context = ssl._create_unverified_context
+    response = urllib.request.urlopen(url)
+    text = response.read().decode('utf-8')
+    soup = bs4.BeautifulSoup(text, 'html.parser')
+    table = soup.find("table", attrs={"class":"TABLELIST"})
+    rows = table.find_all("tr")[1:]
+    
+    mapping = {}
+    for row in rows:
+        columns = row.find_all("td")
+        nn = columns[1].text[-2:]
+        name = columns[2].text
+        mapping[name] = nn
+    return mapping

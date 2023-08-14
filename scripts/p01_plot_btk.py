@@ -12,11 +12,12 @@ import Realtime
 # [for test]
 # %load_ext autoreload
 # %autoreload 2
-# fpath = f"{os.environ['HOME']}/git/realtimeTC/refdata/TCs/JTWC_pre_intensity/WP072023.txt"
+# fpath = f"{os.environ['HOME']}/git/realtimeTC/refdata/TCs/JTWC_pre_btk/WP072023.txt"
 # odir = f"{os.environ['HOME']}/git/realtimeTC/outputs/JTWC_pre_intensity"
 # st = None
 # et = None
 # sar_NESDIS_csv = None
+# JMA_csv = None
 #%%
 parser = argparse.ArgumentParser(description="Process year and basin arguments.")
 parser.add_argument("--bbnnyyyy", type=str, help="The ID for target TC")
@@ -25,6 +26,7 @@ parser.add_argument("-o", "--odir", type=str, default="/Users/tsukada/git/realti
 parser.add_argument("-s", "--st", type=str, help="Start time to plot in time recognizable format")
 parser.add_argument("-e", "--et", type=str, help="End time to plot in time recognizable format")
 parser.add_argument("--sar_NESDIS_csv", type=str, help="path to NESDIS-SAR Vmax listing file")
+parser.add_argument("--JMA_csv", type=str, help="path to JMA btk file")
 args = parser.parse_args()
 
 if args.fpath is not None and args.bbnnyyyy is not None:
@@ -38,6 +40,7 @@ odir = args.odir
 st = args.st
 et = args.et
 sar_NESDIS_csv = args.sar_NESDIS_csv
+JMA_csv = args.JMA_csv
 
 # %%
 if fpath is not None:
@@ -80,7 +83,6 @@ ax.grid(ls="-", c="#cccccc", axis="y", lw=0.5, zorder=1)
 
 ax.set(xlabel=f"Time ({year})", ylabel=f"Maximum sustained wind ({units})")
 ax.set(yticks=np.r_[ylim_vmax[0]:ylim_vmax[-1]-10+.1:10])
-ax.set_title(f'[{nnb}] {name} ({year}) | Lifetime max intensity: {max_vmax} m/s ({min_pres} hPa)', loc="left")
 
 axr.set(yticks=np.r_[ylim_pres[0]:ylim_pres[-1]-20+.1:20], axisbelow=True)
 axr.set_ylabel("Central pressure (hPa)", labelpad=8, rotation=-90)
@@ -90,6 +92,22 @@ axr.set_ylabel("Central pressure (hPa)", labelpad=8, rotation=-90)
 # ax.plot([], [], "o-", lw=4, c="#0066aa", mec="w", ms=4, mew=1, label="JMA Pmin")
 ax.plot([], [], "o-", lw=4, c="#aa6633", mec="w", ms=4.5, mew=0.8, label="JTWC Vmax")
 ax.plot([], [], "o-", lw=4, c="#0099aa", mec="w", ms=4.5, mew=0.8, label="JTWC Pmin")
+
+# JMA
+if JMA_csv is not None:
+    jma = pd.read_csv(JMA_csv, skipinitialspace=True, parse_dates=["time"])
+    validwind = jma["vmax"]>0
+    jma[["vmax","vmax_kt"]] = jma[["vmax","vmax_kt"]].where(validwind)
+    jma["vmax_ms_1min"] = TCtools.knot_to_ms(TCtools.dvorak.wind10min_to_1min(jma["vmax_kt"])).round(1)
+
+    ax, axr = plotter.bt_intensity(ax, jma["time"], jma["vmax_ms_1min"], jma["pres"], xlim=xlim, ylim=ylim_vmax, ylimr=ylim_pres, 
+                windcolor="#aa3333", prescolor="#0066aa", lw=4, stroke_lw=6, s=25, ew=0.9, vmax_is_front=True,
+                axr=axr, plot_category=False)
+    ax.plot([], [], "o-", lw=4, c="#aa3333", mec="w", ms=4.5, mew=0.8, label="JMA Vmax (via CI#)")
+    ax.plot([], [], "o-", lw=4, c="#0066aa", mec="w", ms=4.5, mew=0.8, label="JMA Pmin")
+    ax.plot(jma["time"], jma["vmax"], ls="--", c="#aa3333", zorder=4.5, label="JMA 10-min Vmax")
+
+    max_vmax = max(max_vmax, jma.vmax_ms_1min.max().item())
 
 # observation: SAR NESDIS
 if sar_NESDIS_csv is not None:
@@ -111,11 +129,15 @@ if ds["vmax"].max() > 90 or ds["pres"].max() > 1030:
 else:
     ax.legend(loc="best", fontsize=10, ncol=3, columnspacing=1, handlelength=1.2, borderpad=0.6, frameon=False)
 
+
+ax.set_title(f'[{nnb}] {name} ({year}) | Lifetime max intensity: {max_vmax} m/s ({min_pres} hPa)', loc="left")
+
 if fpath is not None:
     oname = os.path.basename(fpath)[:-4] + ".png"
 else:
     oname = bbnnyyyy.upper() + ".png"
 
+#%%
 fig.savefig(f"{odir}/{oname}", dpi=300, bbox_inches="tight", pad_inches=.1)
 
 # %%
