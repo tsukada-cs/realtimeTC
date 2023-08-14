@@ -25,7 +25,8 @@ fi
 
 # b02 listup latest IDs
 echo "---------------- b02 ----------------"
-run_python_script $HOME/git/realtimeTC/scripts/b02_listup_updated_IDs.py $HOME/git/realtimeTC/refdata/TCs/tclist.csv -o $HOME/git/realtimeTC/refdata/TCs/latest_IDlist.csv
+time_cutoff=48
+run_python_script $HOME/git/realtimeTC/scripts/b02_listup_updated_IDs.py $HOME/git/realtimeTC/refdata/TCs/tclist.csv -o $HOME/git/realtimeTC/refdata/TCs/latest_IDlist.csv --time_cutoff $time_cutoff
 
 # b03 acquire SAR ATCF
 echo "---------------- b03 ----------------"
