@@ -1,5 +1,6 @@
 #%%
 import os
+import re
 import glob
 
 import numpy as np
@@ -21,7 +22,7 @@ def generate_filelist_html(image_paths, name):
             <p class="h3" style="color: #252e4b;">Best Track Archive</p>
             <!-- <span class="badge bg-danger text-light px-2 py-1">TEST</span> -->
             <div class="alert alert-warning mt-3 mx-5 px-5" role="alert">
-                This is an archive of the preliminary TC analysis from JTWC
+                This is an archive of the preliminary TC analysis from JTWC and NHC
             </div>
         </div>
     </div>
@@ -76,8 +77,9 @@ with open("/Users/tsukada/git/realtimeTC/outputs/html/file_list.html", "w") as f
     file.write(html_content)
 
 # %%
-def generate_image_viewer_html(image_paths):
+def generate_image_viewer_html(image_paths, names):
     top_img_path = image_paths[0]
+    top_name = names[0]
     html = f'''
     <html>
     <head>
@@ -93,16 +95,16 @@ def generate_image_viewer_html(image_paths):
             </div>
             <div class="row mt-1">
                 <div class="col-10 mx-auto alert alert-warning text-center" role="alert">
-                    This is an archive of the preliminary TC analysis from JTWC
+                    This is an archive of the preliminary TC analysis from JTWC and NHC
                 </div>
             </div>
             <div class="row mt-2">
                 <div class="col-md-4 col-sm-5 col-6 form-group px-5 ml-auto">
                     <select id="image-select" class="form-control" onchange="displayImage()">
-                        <option value="{top_img_path}">{os.path.basename(top_img_path)[:-4]}</option>
+                        <option value="{top_img_path}">{os.path.basename(top_img_path)[:-4]} / {top_name}</option>
     '''
-    for path in image_paths[1:]:
-        html += f'<option value="{path}">{os.path.basename(path)[:-4]}</option>'
+    for path, name in zip(image_paths[1:], names[1:]):
+        html += f'<option value="{path}">{os.path.basename(path)[:-4]} / {name}</option>'
 
     html += f'''
                     </select>
@@ -132,6 +134,18 @@ def generate_image_viewer_html(image_paths):
 
     return html
 
-html_content = generate_image_viewer_html(image_paths)
+path_texts = " ".join(image_paths)
+pattern = r'[A-Z][A-Z][0-4][0-9](\d{4}).png'
+path_years = np.array(re.findall(pattern, path_texts))
+
+image_paths_sorted = []
+names_sorted = []
+for year in years:
+    image_paths_sorted = np.r_[image_paths_sorted, np.array(image_paths)[path_years==year]]
+    names_sorted = np.r_[names_sorted, np.array(names)[path_years==year]]
+
+html_content = generate_image_viewer_html(image_paths_sorted, names_sorted)
 with open("/Users/tsukada/git/realtimeTC/outputs/html/image_viewer.html", "w") as file:
     file.write(html_content)
+
+# %%
