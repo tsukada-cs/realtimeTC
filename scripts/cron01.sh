@@ -13,18 +13,14 @@ bash $HOME/git/realtimeTC/scripts/sync_remote.sh
 
 # B01 acquire bset track
 echo "---------------- b01 ----------------"
-typeset -a basins=("AL" "EP" "WP" "IO" "SH")
+basins="AL EP WP IO SH"
 year=$(date +%Y)
-for basin in "${basins[@]}"; do
-    run_python_script $HOME/git/realtimeTC/scripts/b01_update_btk.py -y $year -b $basin -p $HOME/git/realtimeTC/refdata/TCs/tclist.csv -o $HOME/git/realtimeTC/refdata/TCs/JTWC_pre_btk
-done
+run_python_script $HOME/git/realtimeTC/scripts/b01_update_btk.py -y $year -b $basins -p $HOME/git/realtimeTC/refdata/TCs/tclist.csv -o $HOME/git/realtimeTC/refdata/TCs/JTWC_pre_btk
 
 current_month=$(date +%m)
 if [ $current_month -eq 01 ]; then
-    lastyear=$((current_year - 1))
-    for basin in "${basins[@]}"; do
-        run_python_script $HOME/git/realtimeTC/scripts/b01_update_btk.py -y $lastyear -b $basin -p $HOME/git/realtimeTC/refdata/TCs/tclist.csv -o $HOME/git/realtimeTC/refdata/TCs/JTWC_pre_btk
-    done
+lastyear=$((current_year - 1))
+run_python_script $HOME/git/realtimeTC/scripts/b01_update_btk.py -y $lastyear -b $basins -p $HOME/git/realtimeTC/refdata/TCs/tclist.csv -o $HOME/git/realtimeTC/refdata/TCs/JTWC_pre_btk
 fi
 
 # B02 listup latest IDs

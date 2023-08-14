@@ -19,7 +19,7 @@ import Realtime
 #%%
 parser = argparse.ArgumentParser(description="Process year and basin arguments.")
 parser.add_argument("-y", "--year", type=int, help="The year to retrieve the TC directories.")
-parser.add_argument("-b", "--basin", type=str, choices=["AL", "EP", "WP", "IO", "SH", "al", "ep", "wp", "io", "sh"], help="The basin to retrieve the TC directories. Valid values are 'AL', 'EP', 'WP', 'IO', 'SH'.")
+parser.add_argument("-b", "--basins", type=str, nargs="*", choices=["AL", "EP", "WP", "IO", "SH", "al", "ep", "wp", "io", "sh"], help="The basin to retrieve the TC directories. Valid values are 'AL', 'EP', 'WP', 'IO', 'SH'.")
 parser.add_argument("-p", "--path_to_tclist", type=str, default="/Users/tsukada/git/realtimeTC/refdata/TCs/tclist.csv")
 parser.add_argument("-o", "--odir", type=str, default="/Users/tsukada/git/realtimeTC/refdata/TCs")
 parser.add_argument("-n", "--no_replace", action="store_true")
@@ -27,15 +27,12 @@ parser.add_argument("-f", "--force", action="store_true", help="If specified, up
 
 args = parser.parse_args()
 year = args.year
-bb = args.basin
+bbs = args.basins
 path_to_tclist = args.path_to_tclist
 odir = args.odir
 no_replace = args.no_replace
 force = args.force
 #%%
-IDs = Realtime.get_jtwc_IDs(year, bb)
-tclist = pd.read_csv(path_to_tclist, index_col="ID", skipinitialspace=True)
-
 def download_and_read_btk(ID, odir):
     ds = Realtime.download_jtwc_bt_from_navy(ID, opath=f"{odir}/{ID}.txt", asxarray=True)
     return ds
@@ -55,17 +52,21 @@ def update_TC(tclist, ID, odir):
     tclist = tclist.sort_index()
     return tclist
 #%%
-for ID in IDs:
-    if ID not in tclist.index or force:
-        tclist = create_TC(tclist, ID, odir)
-        print(f"-- {ID} is created")
-    else:
-        lastmod = Realtime.get_lastmod(ID)
-        if lastmod != tclist["lastmod"][ID]:
-            tclist = update_TC(tclist, ID, odir)
-            print(f"-- {ID} is updated")
+tclist = pd.read_csv(path_to_tclist, index_col="ID", skipinitialspace=True)
+for bb in bbs:
+    print(f"-- {bb}")
+    IDs = Realtime.get_jtwc_IDs(year, bb)
+    for ID in IDs:
+        if ID not in tclist.index or force:
+            tclist = create_TC(tclist, ID, odir)
+            print(f"-- {ID} is created")
         else:
-            pass
+            lastmod = Realtime.get_lastmod(ID)
+            if lastmod != tclist["lastmod"][ID]:
+                tclist = update_TC(tclist, ID, odir)
+                print(f"-- {ID} is updated")
+            else:
+                pass
 
 if no_replace:
     current_time = datetime.datetime.now()
