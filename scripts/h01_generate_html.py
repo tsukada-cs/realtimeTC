@@ -1,7 +1,6 @@
 #%%
 import os
 import re
-import glob
 
 import numpy as np
 import pandas as pd
@@ -12,8 +11,8 @@ def generate_filelist_html(image_paths, name):
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      <title>Best Track Archive</title>
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+        <title>Best Track Archive</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     </head>
     <body class="bg-white">
     <div class="container-fluid px-3">
@@ -64,17 +63,6 @@ def generate_filelist_html(image_paths, name):
     </html>
     '''
     return html
-
-tclist = pd.read_csv("/Users/tsukada/git/realtimeTC/refdata/TCs/tclist.csv", skipinitialspace=True)
-tclist = tclist.sort_values("ID")
-image_paths = list("tmp/" + tclist["ID"] + ".png")
-names = tclist["name"].values.tolist()
-
-years = np.arange(2023,2021-1,-1).astype(str)
-html_content = generate_filelist_html(image_paths, names)
-
-with open("/Users/tsukada/git/realtimeTC/outputs/html/file_list.html", "w") as file:
-    file.write(html_content)
 
 # %%
 def generate_image_viewer_html(image_paths, names):
@@ -134,6 +122,22 @@ def generate_image_viewer_html(image_paths, names):
 
     return html
 
+
+#%%
+# file_list.html
+tclist = pd.read_csv(f"{os.environ['HOME']}/git/realtimeTC/refdata/TCs/tclist.csv", skipinitialspace=True)
+tclist = tclist.sort_values("ID")
+image_paths = list("tmp/" + tclist["ID"] + ".png")
+names = tclist["name"].values.tolist()
+
+years = np.arange(2023,2021-1,-1).astype(str)
+html_content = generate_filelist_html(image_paths, names)
+
+with open(f"{os.environ['HOME']}/git/realtimeTC/outputs/html/file_list.html", "w") as file:
+    file.write(html_content)
+
+
+# image_viewer.html
 path_texts = " ".join(image_paths)
 pattern = r'[A-Z][A-Z][0-4][0-9](\d{4}).png'
 path_years = np.array(re.findall(pattern, path_texts))
@@ -145,7 +149,7 @@ for year in years:
     names_sorted = np.r_[names_sorted, np.array(names)[path_years==year]]
 
 html_content = generate_image_viewer_html(image_paths_sorted, names_sorted)
-with open("/Users/tsukada/git/realtimeTC/outputs/html/image_viewer.html", "w") as file:
+with open(f"{os.environ['HOME']}/git/realtimeTC/outputs/html/image_viewer.html", "w") as file:
     file.write(html_content)
 
 # %%
