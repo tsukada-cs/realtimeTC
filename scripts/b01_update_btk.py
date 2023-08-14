@@ -16,6 +16,9 @@ import Realtime
 # odir = "/Users/tsukada/git/realtimeTC/refdata/TCs/JTWC_pre_btk"
 # no_replace = False
 # force = True
+# time_cutoff = 72
+# time_units = "hour"
+
 #%%
 parser = argparse.ArgumentParser(description="Process year and basin arguments.")
 parser.add_argument("-y", "--year", type=int, help="The year to retrieve the TC directories.")
@@ -24,6 +27,8 @@ parser.add_argument("-p", "--path_to_tclist", type=str, default="/Users/tsukada/
 parser.add_argument("-o", "--odir", type=str, default="/Users/tsukada/git/realtimeTC/refdata/TCs")
 parser.add_argument("-n", "--no_replace", action="store_true")
 parser.add_argument("-f", "--force", action="store_true", help="If specified, update all TCs")
+parser.add_argument("-t", "--time_cutoff", type=float, default=72, help="Cut-off point in time for considering data as the potantially updated case (in `time_units). Data up to this hours before this cut-off point is considered as the latest data.")
+parser.add_argument("-u", "--time_units", type=str, default="hour")
 
 args = parser.parse_args()
 year = args.year
@@ -32,6 +37,9 @@ path_to_tclist = args.path_to_tclist
 odir = args.odir
 no_replace = args.no_replace
 force = args.force
+time_cutoff = args.time_cutoff
+time_units = args.time_units
+
 #%%
 def download_and_read_btk(ID, odir):
     ds = Realtime.download_jtwc_bt_from_navy(ID, opath=f"{odir}/{ID}.txt", asxarray=True)
@@ -53,6 +61,10 @@ def update_TC(tclist, ID, odir):
     return tclist
 #%%
 tclist = pd.read_csv(path_to_tclist, index_col="ID", skipinitialspace=True)
+lastmods = pd.to_datetime(tclist["lastmod"], format="%d-%b-%Y %H:%M")
+tclist["elapsed_times"] = (pd.Timestamp.now("UTC").replace(tzinfo=None)-pd.Timedelta(hours=7)) - lastmods
+
+
 for bb in bbs:
     print(f"-- {bb}")
     IDs = Realtime.get_jtwc_IDs(year, bb)
@@ -61,12 +73,14 @@ for bb in bbs:
             tclist = create_TC(tclist, ID, odir)
             print(f"-- {ID} is created")
         else:
+            if tclist["elapsed_times"][ID] > pd.Timedelta(time_cutoff, time_units):
+                continue
             lastmod = Realtime.get_lastmod(ID)
             if lastmod != tclist["lastmod"][ID]:
                 tclist = update_TC(tclist, ID, odir)
                 print(f"-- {ID} is updated")
             else:
-                pass
+                pass # no change
 
 if no_replace:
     current_time = datetime.datetime.now()
