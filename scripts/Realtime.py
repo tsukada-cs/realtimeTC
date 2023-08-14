@@ -310,7 +310,19 @@ def get_NESDIS_SAR_ATCF_urls(bbnnyyyy):
 
 def download_SAR_ATCF_from_NESDIS(bbnnyyyy, odir="./"):
     """
+    Downloads SAR ATCF data from NESDIS.
 
+    Parameters
+    ----------
+    bbnnyyyy : str
+        BBNNYYYY format string representing the desired data.
+    odir : str, optional
+        Output directory to save the downloaded data. Defaults to current directory.
+
+    Returns
+    -------
+    ds : xarray.Dataset
+        Xarray Dataset containing the downloaded SAR ATCF data.
     """
     sar_atcf_urls = get_NESDIS_SAR_ATCF_urls(bbnnyyyy)
     times, vmax_kts = [], []
