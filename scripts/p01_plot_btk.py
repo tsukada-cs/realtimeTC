@@ -103,10 +103,10 @@ if JMA_csv is not None:
 
         ax, axr = plotter.bt_intensity(ax, jma["time"], jma["vmax_ms_1min"], jma["pres"], xlim=xlim, ylim=ylim_vmax, ylimr=ylim_pres, 
                     windcolor="#aa3333", prescolor="#0066aa", lw=3.6, stroke_lw=4.5, s=15, ew=0.5, vmax_is_front=True,
-                    axr=axr, plot_category=False)
+                    axr=axr, plot_category=False, zorder_offset=-1)
         ax.plot([], [], "o-", lw=4, c="#aa3333", mec="w", ms=4.5, mew=0.7, label="JMA Vmax (via CI#)")
         ax.plot([], [], "o-", lw=4, c="#0066aa", mec="w", ms=4.5, mew=0.7, label="JMA Pmin")
-        ax.plot(jma["time"], jma["vmax"], ls="--", c="#aa3333", zorder=4.5, label="JMA 10-min Vmax")
+        ax.plot(jma["time"], jma["vmax"], ls="--", c="#aa3333", zorder=3.5, label="JMA 10-min Vmax")
 
         max_vmax = max(max_vmax, jma.vmax_ms_1min.max().item())
 
