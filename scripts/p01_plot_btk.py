@@ -77,8 +77,8 @@ category_kwargs = dict(
 )
 
 ax, axr = plotter.bt_intensity(ax, ds["time"], ds["vmax"], ds["pres"], xlim=xlim, ylim=ylim_vmax, ylimr=ylim_pres, 
-                            windcolor="#aa6633", prescolor="#0099aa", lw=3.6, stroke_lw=4.5, s=15, ew=0.5, 
-                            category_kwargs=category_kwargs, vmax_is_front=True)
+            windcolor="#aa6633", prescolor="#0099aa", lw=3.4, stroke_color="snow", stroke_lw=4.5, s=15, ew=0.5, 
+            category_kwargs=category_kwargs, vmax_is_front=True)
 ax.grid(ls="-", c="#cccccc", axis="y", lw=0.5, zorder=1)
 
 ax.set(xlabel=f"Time ({year})", ylabel=f"Maximum sustained wind ({units})")
@@ -87,11 +87,8 @@ ax.set(yticks=np.r_[ylim_vmax[0]:ylim_vmax[-1]-10+.1:10])
 axr.set(yticks=np.r_[ylim_pres[0]:ylim_pres[-1]-20+.1:20], axisbelow=True)
 axr.set_ylabel("Central pressure (hPa)", labelpad=8, rotation=-90)
 
-# ax.plot([], [], "o-", lw=4, c="#aa3333", mec="w", ms=4, mew=1, label="JMA Vmax (1 min via CI#)")
-# ax.plot([], [], ls="--", c="#aa3333", label="JMA Vmax (10 min)")
-# ax.plot([], [], "o-", lw=4, c="#0066aa", mec="w", ms=4, mew=1, label="JMA Pmin")
-ax.plot([], [], "o-", lw=4, c="#aa6633", mec="w", ms=4.5, mew=0.7, label="JTWC Vmax")
-ax.plot([], [], "o-", lw=4, c="#0099aa", mec="w", ms=4.5, mew=0.7, label="JTWC Pmin")
+ax.plot([], [], "o-", lw=4, c="#aa6633", mec="snow", ms=4.5, mew=0.7, solid_capstyle="round", label="JTWC Vmax")
+ax.plot([], [], "o-", lw=4, c="#0099aa", mec="snow", ms=4.5, mew=0.7, solid_capstyle="round", label="JTWC Pmin")
 
 # JMA
 if JMA_csv is not None:
@@ -102,10 +99,10 @@ if JMA_csv is not None:
         jma["vmax_ms_1min"] = TCtools.knot_to_ms(TCtools.dvorak.wind10min_to_1min(jma["vmax_kt"])).round(1)
 
         ax, axr = plotter.bt_intensity(ax, jma["time"], jma["vmax_ms_1min"], jma["pres"], xlim=xlim, ylim=ylim_vmax, ylimr=ylim_pres, 
-                    windcolor="#aa3333", prescolor="#0066aa", lw=3.6, stroke_lw=4.5, s=15, ew=0.5, vmax_is_front=True,
+                    windcolor="#aa3333", prescolor="#0066aa", lw=3.4, stroke_color="snow", stroke_lw=4.5, s=15, ew=0.5, vmax_is_front=True,
                     axr=axr, plot_category=False, zorder_offset=-1)
-        ax.plot([], [], "o-", lw=4, c="#aa3333", mec="w", ms=4.5, mew=0.7, label="JMA Vmax (via CI#)")
-        ax.plot([], [], "o-", lw=4, c="#0066aa", mec="w", ms=4.5, mew=0.7, label="JMA Pmin")
+        ax.plot([], [], "o-", lw=4, c="#aa3333", mec="snow", ms=4.5, mew=0.7, solid_capstyle="round", label="JMA Vmax (via CI#)")
+        ax.plot([], [], "o-", lw=4, c="#0066aa", mec="snow", ms=4.5, mew=0.7, solid_capstyle="round", label="JMA Pmin")
         ax.plot(jma["time"], jma["vmax"], ls="--", c="#aa3333", zorder=3.5, label="JMA 10-min Vmax")
 
         max_vmax = max(max_vmax, jma.vmax_ms_1min.max().item())
