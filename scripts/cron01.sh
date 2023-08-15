@@ -46,9 +46,13 @@ run_python_script $HOME/git/realtimeTC/scripts/c01_call_p01.py --plot_NESDIS_SAR
 echo "---------------- h01 ----------------"
 run_python_script $HOME/git/realtimeTC/scripts/h01_generate_html.py
 
+# Rsync html
+rsync -av $HOME/git/realtimeTC/outputs/html/file_list.html tc-times@www1163.sakura.ne.jp:www/
+
 # Rsync images
 echo "---------------- rsync images ----------------"
 rsync -av $HOME/git/realtimeTC/outputs/JTWC_pre_intensity/ tc-times@www1163.sakura.ne.jp:www/tmp/
+
 
 # Rsync tclist.csv
 echo "---------------- rsync tclist.csv ----------------"
