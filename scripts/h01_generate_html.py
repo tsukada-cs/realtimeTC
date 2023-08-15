@@ -6,26 +6,51 @@ import numpy as np
 import pandas as pd
 
 
-def generate_filelist_html(image_paths, name):
+def generate_filelist_html(image_paths, names):
     html = '''
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <title>Best Track Archive</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#search-input').on('keyup', function() {
+                    var value = $(this).val().toLowerCase();
+                    $('#search-results').empty();
+                    if (value !== '') {
+                        $('.image-link').each(function() {
+                            if ($(this).text().toLowerCase().indexOf(value) > -1) {
+                                $('#search-results').append('<div class="col-xxl-1 col-xl-2 col-md-3 col-sm-6 col-12"><a href="' + $(this).attr('href') + '" class="text-info">' + $(this).text() + '</a></div>');
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
     </head>
     <body class="bg-white">
     <div class="container-fluid px-3">
         <div class="row pt-5">
             <div class="col text-center">
-            <p class="h3" style="color: #252e4b;">Best Track Archive</p>
-            <!-- <span class="badge bg-danger text-light px-2 py-1">TEST</span> -->
-            <div class="alert alert-warning mt-3 mx-5 px-5" role="alert">
-                This is an archive of the preliminary TC analysis from JTWC and NHC
+                <p class="h3" style="color: #252e4b;">Best Track Archive</p>
+                <!-- <span class="badge bg-danger text-light px-2 py-1">TEST</span> -->
+                <div class="alert alert-warning mt-3 mx-5 px-5" role="alert">
+                    This is an archive of the preliminary TC analysis from JTWC and NHC
+                </div>
             </div>
         </div>
     </div>
+    <div class="row mt-3 mx-5">
+        <div class="col text-center">
+            <input type="text" id="search-input" class="form-control" placeholder="Search...">
+        </div>
+    </div>
+    <div class="row mt-3 mb-3 mx-5" id="search-results">
+    </div>
     '''
+
     basins = ["AL","EP","WP","IO","SH"]
     for year in years:
         basinwise_URLs = {"AL":[], "EP":[], "WP":[], "IO":[], "SH":[]}
@@ -47,7 +72,7 @@ def generate_filelist_html(image_paths, name):
             html += f'<p class="h6 text-body">{basin}</p>\n'
             for image_path, name in zip(basinwise_URLs[basin], basinwise_names[basin]):
                 bbnnyyyy = os.path.basename(image_path)[:-4]
-                html += f'    <a href="{image_path}" class="text-info fs-6">{bbnnyyyy} / {name}</a>\n<br>\n'
+                html += f'    <a href="{image_path}" class="text-info fs-6 image-link">{bbnnyyyy} / {name}</a>\n<br>\n'
             html += '</div>\n'
         html += '</div>\n'
         html += '</>\n'
