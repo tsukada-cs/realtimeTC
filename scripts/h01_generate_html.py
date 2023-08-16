@@ -22,7 +22,7 @@ def generate_filelist_html(image_paths, names):
         gtag('js', new Date());
         gtag('config', 'G-YL02WM0DDQ');
         </script>
-        
+
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script>
             $(document).ready(function() {
@@ -44,11 +44,8 @@ def generate_filelist_html(image_paths, names):
     <div class="container-fluid px-3">
         <div class="row pt-5">
             <div class="col text-center">
-                <p class="h3" style="color: #252e4b;">Best Track Archive</p>
-                <!-- <span class="badge bg-danger text-light px-2 py-1">TEST</span> -->
-                <div class="alert alert-warning mt-3 mx-5 px-5" role="alert">
-                    This is an archive of the preliminary TC analysis from JTWC and NHC
-                </div>
+                <p class="lead mb-2" style="color: #0a2f35;">Best Track Archive</p>
+                <span class="badge bg-danger text-light px-2 py-1">beta</span>
             </div>
         </div>
     </div>
@@ -89,8 +86,8 @@ def generate_filelist_html(image_paths, names):
     html += '</div>\n'
     html += '''
     <footer class="footer">
-    <div class="text-center mt-4 py-4 bg-light border-top">
-        <span class="text-muted align-middle">&copy; TC Times</span>
+    <div class="text-center mt-4 py-4 bg-light border-top border-bottom">
+        <a href="index.html" class="text-muted align-middle">&copy; TC Times</a>
     </div>
     </footer>
 
@@ -124,13 +121,9 @@ def generate_image_viewer_html(image_paths, names):
     <body class="bg-white">
         <div class="container-fluid px-3">
             <div class="row pt-3">
-                <div class="col text-center">
-                    <p class="h4 text-center my-3">Simple Image Viewer</p>
-                </div>
-            </div>
-            <div class="row mt-1">
-                <div class="col-10 mx-auto alert alert-warning text-center" role="alert">
-                    This is an archive of the preliminary TC analysis from JTWC and NHC
+                <div class="col text-center my-3">
+                    <p class="lead mb-2" style="color: #0a2f35;">Simple Image Viewer</p>
+                    <span class="badge bg-danger text-light px-2 py-1">beta</span>
                 </div>
             </div>
             <div class="row mt-2">
@@ -163,6 +156,11 @@ def generate_image_viewer_html(image_paths, names):
                 displayedImage.src = selectedImage;
             }
         </script>
+    <footer class="footer">
+    <div class="text-center mt-4 py-4 bg-white">
+        <a href="index.html" class="text-muted align-middle">&copy; TC Times</a>
+    </div>
+    </footer>
     </body>
     </html>
     '''
