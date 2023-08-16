@@ -34,7 +34,10 @@ tclist = pd.read_csv(path_to_tclist)
 lastmods = pd.to_datetime(tclist["lastmod"], format="%d-%b-%Y %H:%M")
 
 elapsed_times = (pd.Timestamp.now("UTC").replace(tzinfo=None)-pd.Timedelta(hours=7)) - lastmods
-tclist["is_latest"] = elapsed_times <= pd.Timedelta(time_cutoff, time_units)
+if time_cutoff > 0:
+    tclist["is_latest"] = elapsed_times <= pd.Timedelta(time_cutoff, time_units)
+else:
+    tclist["is_latest"] = np.ones(tclist["ID"].size, bool)
 
 bbs = tclist["ID"].str[:2]
 tclist["valid_basin"] = np.zeros(tclist["ID"].size, bool)

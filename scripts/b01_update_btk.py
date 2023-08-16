@@ -3,6 +3,7 @@ import os
 import argparse
 import datetime
 
+import numpy as np
 import pandas as pd
 
 import Realtime
@@ -62,8 +63,11 @@ def update_TC(tclist, ID, odir):
 #%% main
 tclist = pd.read_csv(path_to_tclist, index_col="ID", skipinitialspace=True)
 lastmods = pd.to_datetime(tclist["lastmod"], format="%d-%b-%Y %H:%M")
-tclist["elapsed_times"] = (pd.Timestamp.now("UTC").replace(tzinfo=None)-pd.Timedelta(hours=7)) - lastmods
-
+elapsed_times = (pd.Timestamp.now("UTC").replace(tzinfo=None)-pd.Timedelta(hours=7)) - lastmods
+if time_cutoff > 0:
+    tclist["is_latest"] = elapsed_times <= pd.Timedelta(time_cutoff, time_units)
+else:
+    tclist["is_latest"] = np.ones(tclist["ID"].size, bool)
 
 for bb in bbs:
     print(f"-- {bb}")
@@ -73,7 +77,7 @@ for bb in bbs:
             tclist = create_TC(tclist, ID, odir)
             print(f"-- {ID} is created")
         else:
-            if tclist["elapsed_times"][ID] > pd.Timedelta(time_cutoff, time_units):
+            if not tclist["is_latest"][ID]:
                 continue
             lastmod = Realtime.get_lastmod(ID)
             if lastmod != tclist["lastmod"][ID]:
