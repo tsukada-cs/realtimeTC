@@ -44,17 +44,17 @@ run_python_script scripts/b04_acquire_pre_JMA_btk.py
 echo "---------------- c01 ----------------"
 # run_python_script scripts/c01_call_p01.py --plot_NESDIS_SAR
 run_python_script scripts/c01_call_p01.py --plot_NESDIS_SAR --plot_JMA
+rsync -av outputs/JTWC_pre_intensity/ www/tmp
 
 # h01 generate HTML
 echo "---------------- h01 ----------------"
 run_python_script scripts/h01_generate_html.py
+rsync -av outputs/html/ www/
 
-# Rsync html
-rsync -av outputs/html/file_list.html tc-times@www1163.sakura.ne.jp:www/
 
-# Rsync images
-echo "---------------- rsync images ----------------"
-rsync -av outputs/JTWC_pre_intensity/ tc-times@www1163.sakura.ne.jp:www/tmp/
+# Rsync www
+echo "---------------- rsync www ----------------"
+rsync -av www/ tc-times@www1163.sakura.ne.jp:www/
 
 
 # Rsync tclist.csv
