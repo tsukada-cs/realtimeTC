@@ -19,18 +19,18 @@ echo "---------------- b01 ----------------"
 basins="AL EP WP IO SH"
 # basins="WP"
 year=$(date +%Y)
-run_python_script scripts/b01_update_btk.py -y $year -b $basins -p refdata/TCs/tclist.csv -o refdata/TCs/JTWC_pre_btk
+run_python_script scripts/b01_update_btk.py -y $year -b $=basins -p refdata/TCs/tclist.csv -o refdata/TCs/JTWC_pre_btk
 
 # current_month=$(date +%m)
 # if [ $current_month -eq 01 ]; then
 # lastyear=$((current_year - 1))
-# run_python_script scripts/b01_update_btk.py -y $lastyear -b $basins -p refdata/TCs/tclist.csv -o refdata/TCs/JTWC_pre_btk
+# run_python_script scripts/b01_update_btk.py -y $lastyear -b $=basins -p refdata/TCs/tclist.csv -o refdata/TCs/JTWC_pre_btk
 # fi
 
 # b02 listup latest IDs
 echo "---------------- b02 ----------------"
 time_cutoff=2
-run_python_script scripts/b02_listup_updated_IDs.py refdata/TCs/tclist.csv -o refdata/TCs/latest_IDlist.csv -y $year -b $basins --time_cutoff $time_cutoff
+run_python_script scripts/b02_listup_updated_IDs.py refdata/TCs/tclist.csv -o refdata/TCs/latest_IDlist.csv -y $year -b $=basins --time_cutoff $time_cutoff
 
 # b03 acquire SAR ATCF
 echo "---------------- b03 ----------------"
