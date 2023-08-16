@@ -13,6 +13,16 @@ def generate_filelist_html(image_paths, names):
     <head>
         <title>Best Track Archive</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-YL02WM0DDQ"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-YL02WM0DDQ');
+        </script>
+        
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script>
             $(document).ready(function() {
@@ -93,12 +103,24 @@ def generate_filelist_html(image_paths, names):
 def generate_image_viewer_html(image_paths, names):
     top_img_path = image_paths[0]
     top_name = names[0]
-    html = f'''
+    html = '''
     <html>
     <head>
         <title>Simple Image Viewer</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YL02WM0DDQ"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-YL02WM0DDQ');
+    </script>
     </head>
+    '''
+
+    html += f'''
     <body class="bg-white">
         <div class="container-fluid px-3">
             <div class="row pt-3">
