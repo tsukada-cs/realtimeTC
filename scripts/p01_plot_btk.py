@@ -65,6 +65,9 @@ if et is None:
     et = pd.to_datetime(ds.time[-1].item()) + pd.Timedelta(24, "hour")
 #%% intensity
 plotter = TCtools.Plotter()
+figwidth = 8
+if et-st >= pd.Timedelta(days=20):
+    figwidth = 9
 fig, ax = plt.subplots(figsize=(8,4.5), facecolor="w")
 xlim = [st,et]
 ylim_vmax = [0,100]
