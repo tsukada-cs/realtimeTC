@@ -8,36 +8,20 @@ import pandas as pd
 
 
 def knot_to_ms(knot):
-    """
-    Convert speed from knots to meters per second.
-
-    Parameters
-    ----------
-    knot : float
-        Speed in knots.
-
-    Returns
-    -------
-    float
-        Speed in meters per second.
-    """
-    return 0.514444 * knot
+    ms = 0.514444 * knot
+    return ms
 
 def ms_to_knot(ms):
-    """
-    Convert speed from meters per second to knots.
+    kt = ms / 0.514444
+    return kt
 
-    Parameters
-    ----------
-    ms : float
-        Speed in meters per second.
+def nmi_to_km(nmi):
+    km = nmi * 1.852
+    return km
 
-    Returns
-    -------
-    float
-        Speed in knots.
-    """
-    return 1.94384 * ms
+def km_to_nmi(km):
+    nmi = km / 1.852
+    return nmi
 
 def bb_to_basin(bb):
     basin = {"AL":"ATL","EP":"EPAC","WP":"WPAC","IO":"IO","SH":"SHEM"}[bb]
@@ -57,6 +41,29 @@ def b_to_bb(b):
 
 def b_to_basin(b):
     return bb_to_basin(b_to_bb(b))
+
+def _rawtext_to_rows(text, sep=" "):
+    """
+    Convert raw text data into a list of rows.
+
+    Parameters
+    ----------
+    text : str
+        A string representing the raw text data.
+
+    Returns
+    -------
+    List[List[str]]
+        A list of rows representing the data.
+    """
+    text = text.split("\n")
+    text.remove("")
+    
+    rows = []
+    for entry in text:
+        values = re.split(f"{sep}+", entry)
+        rows.append(values)
+    return rows
 
 def bbnnyyyy_to_nnbname(bbnnyyyy):
     url_header = "https://www.nrlmry.navy.mil/tcdat"
@@ -225,29 +232,6 @@ def _read_jtwc_bt_from_rows(rows):
     ds["bbnnyyyy"].attrs.update({"name":"bbnnyyyy","long_name":"bbnnyyyy","units":""})
     return ds
 
-def _rawtext_to_rows(text, sep=" "):
-    """
-    Convert raw text data into a list of rows.
-
-    Parameters
-    ----------
-    text : str
-        A string representing the raw text data.
-
-    Returns
-    -------
-    List[List[str]]
-        A list of rows representing the data.
-    """
-    text = text.split("\n")
-    text.remove("")
-    
-    rows = []
-    for entry in text:
-        values = re.split(f"{sep}+", entry)
-        rows.append(values)
-    return rows
-
 def get_jtwc_bt_from_navy(bbnnyyyy):
     """
     Parameters
@@ -324,24 +308,21 @@ def download_SAR_ATCF_from_NESDIS(bbnnyyyy, odir="./"):
         Xarray Dataset containing the downloaded SAR ATCF data.
     """
     sar_atcf_urls = get_NESDIS_SAR_ATCF_urls(bbnnyyyy)
-    times, vmax_kts = [], []
+    times, vmaxs_kt, rmws_nmi = [], [], []
     for sar_atcf_url in sar_atcf_urls:
         ssl._create_default_https_context = ssl._create_unverified_context
-        response = urllib.request.urlopen(sar_atcf_url)
-        text = response.read().decode('utf-8')
-
-        rows = _rawtext_to_rows(text, sep=", ")
-        time = rows[0][2]
-        vmax_kt = rows[0][11]
-        # table = pd.DataFrame(rows, columns=["basin", "nn", "time", "ATCF", "Sat", "_", "_", "LatNS", "LonEW", "_", "_", "vmax_kt", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_"])
-        times.append(pd.to_datetime(time))
-        vmax_kts.append(float(vmax_kt))
+        table = pd.read_csv(sar_atcf_url, header=None)
+        times.append(table.loc[0][2])
+        vmaxs_kt.append(table.loc[0][11])
+        rmws_nmi.append(table.loc[0][27])
     
-    df = pd.DataFrame(np.array([times,vmax_kts]).T, columns=["time", "vmax_kt"])
-    df["vmax"] = knot_to_ms(df["vmax_kt"])
+    df = pd.DataFrame(np.array([times, vmaxs_kt, rmws_nmi]).T, columns=["time", "vmax_kt", "rmw_nmi"])
+    df["time"] = pd.to_datetime(df["time"], format="%Y%m%d%H%M")
+    df["vmax"] = np.round(knot_to_ms(df["vmax_kt"]),1)
+    df["rmw"] = np.round(nmi_to_km(df["rmw_nmi"]),1)
+
     oname = bbnnyyyy + "_NESDIS_SAR_ATCF.csv"
     df.to_csv(odir+"/"+oname, index_label="index")
-
     ds = df.to_xarray()
     return ds
 

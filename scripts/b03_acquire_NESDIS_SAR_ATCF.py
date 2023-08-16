@@ -7,6 +7,7 @@ import pandas as pd
 import Realtime
 
 
+IDs = None
 #%%
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--id", type=str, nargs="*", help="Target IDs in bbnnyyyy format")
