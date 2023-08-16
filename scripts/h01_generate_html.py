@@ -87,7 +87,7 @@ def generate_filelist_html(image_paths, names):
     html += '''
     <footer class="footer">
     <div class="text-center mt-4 py-4 bg-light border-top border-bottom">
-        <a href="index.html" class="text-muted align-middle">&copy; TC Times</a>
+        <a href="index.html" class="text-muted align-middle">&copy; Vortex Vision</a>
     </div>
     </footer>
 
@@ -158,7 +158,7 @@ def generate_image_viewer_html(image_paths, names):
         </script>
     <footer class="footer">
     <div class="text-center mt-4 py-4 bg-white">
-        <a href="index.html" class="text-muted align-middle">&copy; TC Times</a>
+        <a href="index.html" class="text-muted align-middle">&copy; Vortex Vision</a>
     </div>
     </footer>
     </body>
