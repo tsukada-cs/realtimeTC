@@ -28,8 +28,8 @@ parser.add_argument("-p", "--path_to_tclist", type=str, default="/Users/tsukada/
 parser.add_argument("-o", "--odir", type=str, default="/Users/tsukada/git/realtimeTC/refdata/TCs")
 parser.add_argument("-n", "--no_replace", action="store_true")
 parser.add_argument("-f", "--force", action="store_true", help="If specified, update all TCs")
-parser.add_argument("-t", "--time_cutoff", type=float, default=72, help="Cut-off point in time for considering data as the potantially updated case (in `time_units). Data up to this hours before this cut-off point is considered as the latest data.")
-parser.add_argument("-u", "--time_units", type=str, default="hour")
+parser.add_argument("-t", "--time_cutoff", type=float, default=3, help="Cut-off point in time for considering data as the potantially updated case (in `time_units). Data up to this hours before this cut-off point is considered as the latest data.")
+parser.add_argument("-u", "--time_units", type=str, default="day")
 
 args = parser.parse_args()
 year = args.year
