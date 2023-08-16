@@ -7,7 +7,7 @@ import pandas as pd
 import Realtime
 
 
-IDs = None
+IDs = ["WP012022"]
 #%%
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--id", type=str, nargs="*", help="Target IDs in bbnnyyyy format")
@@ -22,7 +22,7 @@ if IDs is None:
 odir = f'{os.environ["HOME"]}/git/realtimeTC/refdata/TCs/JMA_btk'
 
 #%%
-current_year = pd.Timestamp.now().year
+current_year = str(pd.Timestamp.now().year)
 JMA_mapping = Realtime.get_JMA_number_name_mapping(current_year)
 
 for target_ID in IDs:
@@ -30,9 +30,12 @@ for target_ID in IDs:
         continue
     print(f"-- b04 (target={target_ID})")
     if target_ID[-4:] != current_year:
-        JMA_mapping.update(Realtime.get_JMA_number_name_mapping(current_year))
+        JMA_mapping.update(Realtime.get_JMA_number_name_mapping(target_ID[-4:]))
 
     name = tclist["name"][target_ID].strip()
+    
+    if name not in JMA_mapping.keys():
+        continue
     number = JMA_mapping[name]
     ds = Realtime.get_jma_bt_from_DigitalTyphoon(target_ID[-4:], number).drop("index")
     if ds.time.size > 0:
