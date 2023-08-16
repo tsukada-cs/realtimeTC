@@ -20,7 +20,9 @@ for target_ID in target_IDs["ID"]:
     command = ['python', f'{os.environ["HOME"]}/git/realtimeTC/scripts/p01_plot_btk.py', f'--bbnnyyyy={target_ID}', f'--odir={odir}']
 
     if args.plot_JMA and target_ID[:2] == "WP":
-        command.append(f'--JMA_csv={os.environ["HOME"]}/git/realtimeTC/refdata/TCs/JMA_btk/{target_ID}_JMA.csv')
+        potential_JMA_path = f'{os.environ["HOME"]}/git/realtimeTC/refdata/TCs/JMA_btk/{target_ID}_JMA.csv'
+        if os.path.exists(potential_JMA_path):
+            command.append(f'--JMA_csv={potential_JMA_path}')
 
     if args.plot_NESDIS_SAR:
         potential_SAR_path = f'{os.environ["HOME"]}/git/realtimeTC/refdata/TCs/NESDIS_SAR_ATCF/{target_ID}_NESDIS_SAR_ATCF.csv'
