@@ -53,6 +53,12 @@ nnb = ds.nnb.item()
 month_b = ds.time[0].dt.strftime("%b").item()
 units = "m/s"
 
+if bbnnyyyy[:2] in ("AL","EP"):
+    usa_agency = "NHC"
+else:
+    usa_agency = "JTWC"
+
+
 if st is None:
     st = pd.to_datetime(ds.time[0].item()) - pd.Timedelta(24, "hour")
 if et is None:
@@ -87,11 +93,11 @@ ax.set(yticks=np.r_[ylim_vmax[0]:ylim_vmax[-1]-10+.1:10])
 axr.set(yticks=np.r_[ylim_pres[0]:ylim_pres[-1]-20+.1:20], axisbelow=True)
 axr.set_ylabel("Central pressure (hPa)", labelpad=8, rotation=-90)
 
-ax.plot([], [], "o-", lw=4, c="#aa6633", mec="snow", ms=4.5, mew=0.7, solid_capstyle="round", label="JTWC Vmax")
-ax.plot([], [], "o-", lw=4, c="#0099aa", mec="snow", ms=4.5, mew=0.7, solid_capstyle="round", label="JTWC Pmin")
+ax.plot([], [], "o-", lw=4, c="#aa6633", mec="snow", ms=4.5, mew=0.7, solid_capstyle="round", label=f"{usa_agency} Vmax")
+ax.plot([], [], "o-", lw=4, c="#0099aa", mec="snow", ms=4.5, mew=0.7, solid_capstyle="round", label=f"{usa_agency} Pmin")
 
 # JMA
-if JMA_csv is not None:
+if bbnnyyyy[:2] == "WP" and JMA_csv is not None:
     jma = pd.read_csv(JMA_csv, skipinitialspace=True, parse_dates=["time"])
     if jma.index.size >= 1:
         validwind = jma["vmax"]>0
