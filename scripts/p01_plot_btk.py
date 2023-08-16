@@ -5,6 +5,7 @@ import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 import TCtools
 import Realtime
@@ -12,7 +13,8 @@ import Realtime
 # [for test]
 # %load_ext autoreload
 # %autoreload 2
-# fpath = f"{os.environ['HOME']}/git/realtimeTC/refdata/TCs/JTWC_pre_btk/WP062023.txt"
+# bbnnyyyy = "SH112023"
+# fpath = f"{os.environ['HOME']}/git/realtimeTC/refdata/TCs/JTWC_pre_btk/SH112023.txt"
 # odir = f"{os.environ['HOME']}/git/realtimeTC/outputs/JTWC_pre_intensity"
 # st = None
 # et = None
@@ -65,9 +67,7 @@ if et is None:
     et = pd.to_datetime(ds.time[-1].item()) + pd.Timedelta(24, "hour")
 #%% intensity
 plotter = TCtools.Plotter()
-figwidth = 8
-if et-st >= pd.Timedelta(days=20):
-    figwidth = 9
+
 fig, ax = plt.subplots(figsize=(8,4.5), facecolor="w")
 xlim = [st,et]
 ylim_vmax = [0,100]
@@ -92,7 +92,6 @@ ax.grid(ls="-", c="#cccccc", axis="y", lw=0.5, zorder=1)
 
 ax.set(xlabel=f"Time ({year})", ylabel=f"Maximum sustained wind ({units})")
 ax.set(yticks=np.r_[ylim_vmax[0]:ylim_vmax[-1]-10+.1:10])
-
 axr.set(yticks=np.r_[ylim_pres[0]:ylim_pres[-1]-20+.1:20], axisbelow=True)
 axr.set_ylabel("Central pressure (hPa)", labelpad=8, rotation=-90)
 
@@ -115,6 +114,11 @@ if bbnnyyyy[:2] == "WP" and JMA_csv is not None:
         ax.plot(jma["time"], jma["vmax"], ls="--", c="#aa3333", zorder=3.5, label="JMA 10-min Vmax")
 
         max_vmax = max(max_vmax, jma.vmax_ms_1min.max().item())
+
+if et-st >= pd.Timedelta(days=20):
+    ax.xaxis.set_minor_locator(mdates.DayLocator(interval=1))
+    ax.xaxis.set_major_locator(mdates.DayLocator(interval=2))
+    ax.grid(which="minor", c="#cccccc", axis="x", lw=0.5, zorder=2)
 
 # observation: SAR NESDIS
 if sar_NESDIS_csv is not None:
