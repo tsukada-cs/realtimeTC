@@ -14,6 +14,7 @@ conda activate tc
 # Sync
 echo "---------------- Sync remote ----------------"
 rsync -av tc-times@www1163.sakura.ne.jp:users/tsukada/private/data/ data/ 
+rsync -av tc-times@www1163.sakura.ne.jp:www/index.html www/index.html
 
 # b01 acquire bset track
 echo "---------------- b01 ----------------"
