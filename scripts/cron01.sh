@@ -13,14 +13,14 @@ conda activate tc
 
 # Sync
 echo "---------------- Sync remote ----------------"
-# bash scripts/sync_remote.sh
+bash scripts/sync_remote.sh
 
 # b01 acquire bset track
 echo "---------------- b01 ----------------"
 basins="AL EP WP IO SH"
 # basins="AL"
 year=$(date +%Y)
-run_python_script scripts/b01_update_btk.py -y $year -b $basins -p data/tclist.csv -o data/TCs -f
+run_python_script scripts/b01_update_btk.py -y $year -b $basins -p data/tclist.csv -o data/TCs
 
 # current_month=$(date +%m)
 # if [ $current_month -eq 01 ]; then
@@ -56,8 +56,3 @@ rsync -av outputs/html/ www/
 # Rsync www
 echo "---------------- rsync www ----------------"
 rsync -av www/ tc-times@www1163.sakura.ne.jp:www/
-
-
-# Rsync tclist.csv
-echo "---------------- rsync tclist.csv ----------------"
-rsync -av data/tclist.csv tc-times@www1163.sakura.ne.jp:tsukada/share/
