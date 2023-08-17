@@ -13,7 +13,7 @@ conda activate tc
 
 # Sync
 echo "---------------- Sync remote ----------------"
-bash scripts/sync_remote.sh
+rsync -av tc-times@www1163.sakura.ne.jp:users/tsukada/private/data/ data/ 
 
 # b01 acquire bset track
 echo "---------------- b01 ----------------"
@@ -45,13 +45,16 @@ run_python_script scripts/b04_acquire_pre_JMA_btk.py
 echo "---------------- c01 ----------------"
 # run_python_script scripts/c01_call_p01.py --plot_NESDIS_SAR
 run_python_script scripts/c01_call_p01.py --plot_NESDIS_SAR --plot_JMA
-rsync -av --include='*.png' --exclude='*.csv' --exclude='*.txt' --prune-empty-dirs data/ www/data/
 
 # h01 generate HTML
 echo "---------------- h01 ----------------"
 run_python_script scripts/h01_generate_html.py
-rsync -av outputs/html/ www/
+rsync -a outputs/html/ www/
 
+
+# sync data
+rsync -a data/ tc-times@www1163.sakura.ne.jp:users/tsukada/private/data/
+rsync -a --include='*.png' --exclude='*.csv' --exclude='*.txt' --prune-empty-dirs data/ www/data/
 
 # Rsync www
 echo "---------------- rsync www ----------------"

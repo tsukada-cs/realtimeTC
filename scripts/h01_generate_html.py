@@ -63,7 +63,7 @@ def generate_filelist_html(image_paths, names):
         basinwise_URLs = {"AL":[], "EP":[], "WP":[], "IO":[], "SH":[]}
         basinwise_names = {"AL":[], "EP":[], "WP":[], "IO":[], "SH":[]}
         for image_path, name in zip(image_paths, names):
-            bbnnyyyy = os.path.basename(image_path)[:-4]
+            bbnnyyyy = os.path.basename(image_path)[:8]
             if bbnnyyyy[-4:] == year:
                 basinwise_URLs[bbnnyyyy[:2]].append(image_path)
                 basinwise_names[bbnnyyyy[:2]].append(name)
@@ -78,7 +78,7 @@ def generate_filelist_html(image_paths, names):
             html += f'<div class="col-xl-2 col-md-4 col-sm-6 col-12 mt-2 mx-auto mb-3 text-center">\n'
             html += f'<p class="h6 text-body">{basin}</p>\n'
             for image_path, name in zip(basinwise_URLs[basin], basinwise_names[basin]):
-                bbnnyyyy = os.path.basename(image_path)[:6]
+                bbnnyyyy = os.path.basename(image_path)[:8]
                 html += f'    <a href="{image_path}" class="text-info fs-6 image-link">{bbnnyyyy} / {name}</a>\n<br>\n'
             html += '</div>\n'
         html += '</div>\n'
@@ -129,10 +129,10 @@ def generate_image_viewer_html(image_paths, names):
             <div class="row mt-2">
                 <div class="col-md-4 col-sm-5 col-6 form-group px-5 ml-auto">
                     <select id="image-select" class="form-control" onchange="displayImage()">
-                        <option value="{top_img_path}">{os.path.basename(top_img_path)[:6]} / {top_name}</option>
+                        <option value="{top_img_path}">{os.path.basename(top_img_path)[:8]} / {top_name}</option>
     '''
     for path, name in zip(image_paths[1:], names[1:]):
-        html += f'<option value="{path}">{os.path.basename(path)[:6]} / {name}</option>'
+        html += f'<option value="{path}">{os.path.basename(path)[:8]} / {name}</option>'
 
     html += f'''
                     </select>
@@ -172,7 +172,7 @@ def generate_image_viewer_html(image_paths, names):
 # btk_archive.html
 tclist = pd.read_csv(f"{os.environ['HOME']}/git/realtimeTC/data/tclist.csv", skipinitialspace=True)
 tclist = tclist.sort_values("ID")
-image_paths = list("data/" + tclist["ID"].str[-4:] + "/" + tclist["ID"] + "/outputs/" + tclist["ID"]+"_intensity.png")
+image_paths = list("data/TCs/" + tclist["ID"].str[-4:] + "/" + tclist["ID"] + "/outputs/" + tclist["ID"]+"_intensity.png")
 names = tclist["name"].values.tolist()
 
 years = np.arange(2023,2021-1,-1).astype(str)
