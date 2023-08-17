@@ -321,7 +321,7 @@ def download_SAR_ATCF_from_NESDIS(bbnnyyyy, odir="./"):
     df["vmax"] = np.round(knot_to_ms(df["vmax_kt"]),1)
     df["rmw"] = np.round(nmi_to_km(df["rmw_nmi"]),1)
 
-    oname = bbnnyyyy + "_NESDIS_SAR_ATCF.csv"
+    oname = bbnnyyyy + "_NESDIS_SAR.csv"
     df.to_csv(odir+"/"+oname, index_label="index")
     ds = df.to_xarray()
     return ds

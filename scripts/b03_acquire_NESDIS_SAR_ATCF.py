@@ -15,10 +15,11 @@ args = parser.parse_args()
 IDs = args.id
 #%%
 if IDs is None:
-    IDs = pd.read_csv(f'{os.environ["HOME"]}/git/realtimeTC/refdata/TCs/latest_IDlist.csv')["ID"]
+    IDs = pd.read_csv(f'{os.environ["HOME"]}/git/realtimeTC/data/pickup_IDs.csv')["ID"]
 
-odir = f'{os.environ["HOME"]}/git/realtimeTC/refdata/TCs/NESDIS_SAR_ATCF'
 
 for target_ID in IDs:
     print(f"-- b03 (target={target_ID})")
-    sar_NESDIS = Realtime.download_SAR_ATCF_from_NESDIS(target_ID, odir=odir)
+    tcdir = f'{os.environ["HOME"]}/git/realtimeTC/data/TCs/{target_ID[-4:]}/{target_ID}'
+    os.makedirs(tcdir, exist_ok=True)
+    sar_NESDIS = Realtime.download_SAR_ATCF_from_NESDIS(target_ID, odir=tcdir)

@@ -24,7 +24,7 @@ import Realtime
 parser = argparse.ArgumentParser(description="Process year and basin arguments.")
 parser.add_argument("--bbnnyyyy", type=str, help="The ID for target TC")
 parser.add_argument("--fpath", type=str, help="The filepath for target besttrack file")
-parser.add_argument("-o", "--odir", type=str, default="/Users/tsukada/git/realtimeTC/outputs/JTWC_pre_intensity")
+parser.add_argument("-o", "--odir", type=str, default="./")
 parser.add_argument("-s", "--st", type=str, help="Start time to plot in time recognizable format")
 parser.add_argument("-e", "--et", type=str, help="End time to plot in time recognizable format")
 parser.add_argument("--sar_NESDIS_csv", type=str, help="path to NESDIS-SAR Vmax listing file")
@@ -145,9 +145,9 @@ ax.set_title(f'[{nnb}] {name} ({year}) | Lifetime max intensity: {max_vmax} m/s 
 
 #%%
 if fpath is not None:
-    oname = os.path.basename(fpath)[:-4] + ".png"
+    oname = os.path.basename(fpath)[:-4] + "_intensity.png"
 else:
-    oname = bbnnyyyy.upper() + ".png"
+    oname = bbnnyyyy.upper() + "_intensity.png"
 fig.savefig(f"{odir}/{oname}", dpi=300, bbox_inches="tight", pad_inches=.1)
 
 # %%

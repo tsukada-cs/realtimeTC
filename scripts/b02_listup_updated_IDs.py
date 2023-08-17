@@ -11,15 +11,15 @@ import pandas as pd
 # path_to_tclist = "/Users/tsukada/git/realtimeTC/refdata/TCs/tclist.csv"
 # time_cutoff = 24
 # time_units = "hour"
-# opath = "/Users/tsukada/git/realtimeTC/refdata/TCs/latest_IDlist.txt"
+# opath = "/Users/tsukada/git/realtimeTC/refdata/TCs/pickup_IDs.txt"
 #%%
 parser = argparse.ArgumentParser(description="Process year and basin arguments.")
 parser.add_argument("path_to_tclist", type=str, help="Path to tclist.csv")
-parser.add_argument("-b", "--basins", type=str, nargs="*", default=["AL","EP","WP","IO","SH"], help="Basins")
+parser.add_argument("-b", "--basins", type=str, nargs="*", choices=["AL", "EP", "WP", "IO", "SH", "al", "ep", "wp", "io", "sh"], help="The basin to retrieve the TC directories. Valid values are 'AL', 'EP', 'WP', 'IO', 'SH'.")
 parser.add_argument("-y", "--years", type=str, nargs="*", help="Years")
 parser.add_argument("-t", "--time_cutoff", type=float, default=2, help="Cut-off point in time for considering data as the latest (in `time_units). Data up to this hours before this cut-off point is considered as the latest data.")
 parser.add_argument("-u", "--time_units", type=str, default="day")
-parser.add_argument("-o", "--opath", type=str, default="./latest_IDlist.csv", help="ID list")
+parser.add_argument("-o", "--opath", type=str, default="./pickup_IDs.csv", help="ID list")
 
 args = parser.parse_args()
 path_to_tclist = args.path_to_tclist

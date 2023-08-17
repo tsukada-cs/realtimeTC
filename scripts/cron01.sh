@@ -12,25 +12,26 @@ run_python_script() {
 conda activate tc
 
 # Sync
-bash scripts/sync_remote.sh
+echo "---------------- Sync remote ----------------"
+# bash scripts/sync_remote.sh
 
 # b01 acquire bset track
 echo "---------------- b01 ----------------"
 basins="AL EP WP IO SH"
-# basins="WP"
+# basins="AL"
 year=$(date +%Y)
-run_python_script scripts/b01_update_btk.py -y $year -b $basins -p refdata/TCs/tclist.csv -o refdata/TCs/JTWC_pre_btk
+run_python_script scripts/b01_update_btk.py -y $year -b $basins -p data/tclist.csv -o data/TCs -f
 
 # current_month=$(date +%m)
 # if [ $current_month -eq 01 ]; then
 # lastyear=$((current_year - 1))
-# run_python_script scripts/b01_update_btk.py -y $lastyear -b $=basins -p refdata/TCs/tclist.csv -o refdata/TCs/JTWC_pre_btk
+# run_python_script scripts/b01_update_btk.py -y $lastyear -b $=basins -p data/tclist.csv -o data/TCs
 # fi
 
 # b02 listup latest IDs
 echo "---------------- b02 ----------------"
 time_cutoff=2
-run_python_script scripts/b02_listup_updated_IDs.py refdata/TCs/tclist.csv -o refdata/TCs/latest_IDlist.csv -y $year -b $basins --time_cutoff $time_cutoff
+run_python_script scripts/b02_listup_updated_IDs.py data/tclist.csv -o data/pickup_IDs.csv -y $year -b $basins --time_cutoff $time_cutoff
 
 # b03 acquire SAR ATCF
 echo "---------------- b03 ----------------"
@@ -44,7 +45,7 @@ run_python_script scripts/b04_acquire_pre_JMA_btk.py
 echo "---------------- c01 ----------------"
 # run_python_script scripts/c01_call_p01.py --plot_NESDIS_SAR
 run_python_script scripts/c01_call_p01.py --plot_NESDIS_SAR --plot_JMA
-rsync -av outputs/JTWC_pre_intensity/ www/tmp
+rsync -av --include='*.png' --exclude='*.csv' --exclude='*.txt' --prune-empty-dirs data/ www/data/
 
 # h01 generate HTML
 echo "---------------- h01 ----------------"
@@ -59,4 +60,4 @@ rsync -av www/ tc-times@www1163.sakura.ne.jp:www/
 
 # Rsync tclist.csv
 echo "---------------- rsync tclist.csv ----------------"
-rsync -av refdata/TCs/tclist.csv tc-times@www1163.sakura.ne.jp:tsukada/share/
+rsync -av data/tclist.csv tc-times@www1163.sakura.ne.jp:tsukada/share/
