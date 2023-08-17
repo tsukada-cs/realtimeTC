@@ -172,7 +172,7 @@ def generate_image_viewer_html(image_paths, names):
 # btk_archive.html
 tclist = pd.read_csv(f"{os.environ['HOME']}/git/realtimeTC/data/tclist.csv", skipinitialspace=True)
 tclist = tclist.sort_values("ID")
-image_paths = list("data/TCs/" + tclist["ID"].str[-4:] + "/" + tclist["ID"] + "/outputs/" + tclist["ID"]+"_intensity.png")
+image_paths = list("../data/TCs/" + tclist["ID"].str[-4:] + "/" + tclist["ID"] + "/outputs/" + tclist["ID"]+"_intensity.png")
 names = tclist["name"].values.tolist()
 
 years = np.arange(2023,2021-1,-1).astype(str)

@@ -49,7 +49,7 @@ run_python_script scripts/c01_call_p01.py --plot_NESDIS_SAR --plot_JMA
 # h01 generate HTML
 echo "---------------- h01 ----------------"
 run_python_script scripts/h01_generate_html.py
-rsync -a outputs/html/ www/
+rsync -a outputs/html/ www/html/
 
 
 # sync data
