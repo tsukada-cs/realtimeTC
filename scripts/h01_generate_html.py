@@ -1,9 +1,17 @@
 #%%
 import os
 import re
+import argparse
 
 import numpy as np
 import pandas as pd
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("path_to_tclist", type=str, help="")
+parser.add_argument("-i", "--path_to_ids", type=str, help="")
+parser.add_argument("-f", "--force", action="store_true", help="")
+args = parser.parse_args()
 
 
 def generate_filelist_html(image_paths, names, show_years):
@@ -212,9 +220,11 @@ def generate_TC_html(image_path, name):
     '''
     return html
 #%%
-tclist = pd.read_csv(f"{os.environ['HOME']}/git/realtimeTC/data/tclist.csv", skipinitialspace=True)
-tclist = tclist.sort_values("ID")
-image_paths = list("../data/TCs/" + tclist["ID"].str[-4:] + "/" + tclist["ID"] + "/outputs/" + tclist["ID"]+"_intensity.png")
+tclist = pd.read_csv(args.path_to_tclist, index_col="ID", skipinitialspace=True).sort_values("ID")
+if args.path_to_ids:
+    pickup_IDs = pd.read_csv(args.path_to_ids, skipinitialspace=True)["ID"]
+    tclist = tclist.loc[pickup_IDs]
+image_paths = list("../data/TCs/" + tclist.index.str[-4:] + "/" + tclist.index + "/outputs/" + tclist.index+"_intensity.png")
 names = tclist["name"].values.tolist()
 show_years = np.arange(2023,2021-1,-1).astype(str)
 
