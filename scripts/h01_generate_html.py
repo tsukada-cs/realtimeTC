@@ -221,9 +221,6 @@ def generate_TC_html(image_path, name):
     return html
 #%%
 tclist = pd.read_csv(args.path_to_tclist, index_col="ID", skipinitialspace=True).sort_values("ID")
-if args.path_to_ids:
-    pickup_IDs = pd.read_csv(args.path_to_ids, skipinitialspace=True)["ID"]
-    tclist = tclist.loc[pickup_IDs]
 image_paths = list("../data/TCs/" + tclist.index.str[-4:] + "/" + tclist.index + "/outputs/" + tclist.index+"_intensity.png")
 names = tclist["name"].values.tolist()
 show_years = np.arange(2023,2021-1,-1).astype(str)
@@ -251,6 +248,11 @@ with open(f"{os.environ['HOME']}/git/realtimeTC/outputs/html/image_viewer.html",
 
 
 # [ex: WP072023.html]
+if args.path_to_ids:
+    pickup_IDs = pd.read_csv(args.path_to_ids, skipinitialspace=True)["ID"]
+    tclist = tclist.loc[pickup_IDs]
+    names = tclist["name"].values.tolist()
+    
 for image_path, name in zip(image_paths, names):
     html_content = generate_TC_html("../../"+image_path, name)
 
