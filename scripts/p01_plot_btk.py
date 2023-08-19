@@ -11,15 +11,15 @@ import TCtools
 import Realtime
 
 # [for test]
-# %load_ext autoreload
-# %autoreload 2
-# bbnnyyyy = "SH112023"
-# fpath = f"{os.environ['HOME']}/git/realtimeTC/refdata/TCs/JTWC_pre_btk/SH112023.txt"
-# odir = f"{os.environ['HOME']}/git/realtimeTC/outputs/JTWC_pre_intensity"
-# st = None
-# et = None
-# sar_NESDIS_csv = None
-# JMA_csv = None
+%load_ext autoreload
+%autoreload 2
+bbnnyyyy = "SH112023"
+fpath = f"{os.environ['HOME']}/git/realtimeTC/data/TCs/{bbnnyyyy[-4:]}/{bbnnyyyy}/{bbnnyyyy}_USA_btk.txt"
+odir = f"{os.environ['HOME']}/git/realtimeTC/data/TCs/{bbnnyyyy[-4:]}/{bbnnyyyy}/outputs/"
+st = None
+et = None
+sar_NESDIS_csv = None
+JMA_csv = None
 #%%
 parser = argparse.ArgumentParser(description="Process year and basin arguments.")
 parser.add_argument("--bbnnyyyy", type=str, help="The ID for target TC")
@@ -83,6 +83,7 @@ category_kwargs = dict(
     lighttextcolor="#ffffff",
     darktextcolor="#ab6633", 
     fontsize=11,
+    textstroke=1.6,
 )
 
 ax, axr = plotter.bt_intensity(ax, ds["time"], ds["vmax"], ds["pres"], xlim=xlim, ylim=ylim_vmax, ylimr=ylim_pres, 
