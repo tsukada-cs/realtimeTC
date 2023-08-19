@@ -11,8 +11,8 @@ import TCtools
 import Realtime
 
 # [for test]
-%load_ext autoreload
-%autoreload 2
+# %load_ext autoreload
+# %autoreload 2
 bbnnyyyy = "SH112023"
 fpath = f"{os.environ['HOME']}/git/realtimeTC/data/TCs/{bbnnyyyy[-4:]}/{bbnnyyyy}/{bbnnyyyy}_USA_btk.txt"
 odir = f"{os.environ['HOME']}/git/realtimeTC/data/TCs/{bbnnyyyy[-4:]}/{bbnnyyyy}/outputs/"
@@ -137,9 +137,9 @@ if sar_NESDIS_csv is not None:
 #     ax.text(Landfall_time, 71, "(Landfall)", ha="center", va="bottom", c="#222222", path_effects=plotter.stroke("w",4))
 
 if ds["vmax"].max() > 90 or ds["pres"].max() > 1030:
-    ax.legend(loc="upper center", bbox_to_anchor=[0.5,-0.17], fontsize=10, ncol=3, columnspacing=1, handlelength=1.2, borderpad=0.6, frameon=False)
+    ax.legend(loc="upper center", bbox_to_anchor=[0.5,-0.17], fontsize=10, ncol=3, columnspacing=1, handlelength=1.2, borderpad=0.6, frameon=True)
 else:
-    ax.legend(loc="best", fontsize=10, ncol=3, columnspacing=1, handlelength=1.2, borderpad=0.6, frameon=False)
+    ax.legend(loc="best", fontsize=10, ncol=3, columnspacing=1, handlelength=1.2, borderpad=0.6, frameon=True)
 
 
 ax.set_title(f'[{nnb}] {name} ({year}) | Lifetime max intensity: {max_vmax} m/s ({min_pres} hPa)', loc="left")
